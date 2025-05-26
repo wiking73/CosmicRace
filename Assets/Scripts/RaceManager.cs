@@ -19,25 +19,36 @@ public class RaceManager : MonoBehaviour
         Instance = this;
     }
 
+    void Start()
+    {
+        resultPanel.SetActive(true);
+        resultText.text = "TEST TEKSTU";
+    }
+
     void Update()
     {
+
         if (raceFinished) return;
 
         racers.Sort((a, b) => a.position.z.CompareTo(b.position.z)); // sortowanie po pozycji Z (na trasie od-do)
 
+        Debug.Log(racers);
         int playerPosition = racers.FindIndex(r => r.CompareTag("Player")) + 1;
         positionText.text = "Pozycja: " + playerPosition + " / " + racers.Count;
     }
 
-    public void FinishRace(string racerName)
+    public void FinishRace(GameObject racer)
     {
-        if (!finishOrder.Contains(racerName))
+        if (!finishOrder.Contains(racer.name))
         {
-            finishOrder.Add(racerName);
+            finishOrder.Add(racer.name);
         }
 
-        if (racerName == "Player")
+        Debug.Log(racer.name);
+
+        if (racer.name.StartsWith("Player"))
         {
+            Debug.Log("Gracz ukonczyl wyscig");
             raceFinished = true;
             ShowResults();
         }
