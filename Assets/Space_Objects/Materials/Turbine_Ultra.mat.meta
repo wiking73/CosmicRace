@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 88f4fc2dcadfe47f594e02fb7f6daaf6
+timeCreated: 1497103591
+licenseType: Store
+NativeFormatImporter:
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 91874
+  packageName: Space_Objects
+  packageVersion: 1.0
+  assetPath: Assets/Space_Objects/Materials/Turbine_Ultra.mat
+  uploadId: 187513
