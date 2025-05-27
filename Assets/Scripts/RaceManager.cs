@@ -19,11 +19,6 @@ public class RaceManager : MonoBehaviour
         Instance = this;
     }
 
-    void Start()
-    {
-        resultPanel.SetActive(true);
-        resultText.text = "TEST TEKSTU";
-    }
 
     void Update()
     {
@@ -32,8 +27,7 @@ public class RaceManager : MonoBehaviour
 
         racers.Sort((a, b) => a.position.z.CompareTo(b.position.z)); // sortowanie po pozycji Z (na trasie od-do)
 
-        Debug.Log(racers);
-        int playerPosition = racers.FindIndex(r => r.CompareTag("Player")) + 1;
+        int playerPosition = racers.FindIndex(r => r.name.StartsWith("Player")) + 1;
         positionText.text = "Pozycja: " + playerPosition + " / " + racers.Count;
     }
 
@@ -57,7 +51,7 @@ public class RaceManager : MonoBehaviour
     void ShowResults()
     {
         resultPanel.SetActive(true);
-        resultText.text = "Wyniki:\n";
+        resultText.text = "Results:\n";
 
         for (int i = 0; i < finishOrder.Count; i++)
         {
