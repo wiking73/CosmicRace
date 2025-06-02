@@ -2,15 +2,24 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
+
 
 public class CarController : MonoBehaviour
 {
     private float horizontalInput, verticalInput;
     private float currentSteerAngle, currentbreakForce;
     private bool isBreaking;
+    private float originalMotorForce;
+    public TextMeshProUGUI FlipCar;
+    public TextMeshProUGUI speedText;
 
+
+    [SerializeField] private float resetHeight = 1.0f;
+    [SerializeField] private KeyCode resetKey = KeyCode.R;
     // Settings
     [SerializeField] private float motorForce, breakForce, maxSteerAngle;
+    [SerializeField] private float boostMultiplier = 3000f;
 
     // Wheel Colliders
     [SerializeField] private WheelCollider frontLeftWheelCollider, frontRightWheelCollider;
@@ -27,7 +36,30 @@ public class CarController : MonoBehaviour
         HandleSteering();
         UpdateWheels();
     }
-
+    private bool IsCarFlipped()
+    {
+        return Vector3.Dot(transform.up, Vector3.down) > 0.5f;
+    }
+    private void Update()
+    {
+        if (Input.GetKeyDown(resetKey))
+        {
+            ResetCarOrientation();
+        }
+        if (FlipCar != null)
+        {
+            FlipCar.gameObject.SetActive(IsCarFlipped());
+        }
+        UpdateSpeedDisplay();
+    }
+    private void UpdateSpeedDisplay()
+    {
+        if (speedText != null)
+        {
+            float speed = GetComponent<Rigidbody>().linearVelocity.magnitude * 3.6f; 
+            speedText.text = Mathf.RoundToInt(speed).ToString() + " km/h";
+        }
+    }
     private void GetInput()
     {
         // Steering Input
@@ -79,4 +111,33 @@ public class CarController : MonoBehaviour
         wheelTransform.rotation = rot;
         wheelTransform.position = pos;
     }
+
+    private void Start()
+    {
+        originalMotorForce = motorForce; 
+    }
+    public IEnumerator ActivateBoost(float multiplier, float duration) 
+    {
+        float originalMotorForce = motorForce;
+        motorForce += multiplier; 
+        yield return new WaitForSeconds(duration);
+        motorForce = originalMotorForce;
+    }
+    private void ResetCarOrientation()
+    {
+        
+        transform.position += Vector3.up * resetHeight;    
+        Vector3 uprightRotation = new Vector3(0, transform.eulerAngles.y, 0);
+        transform.eulerAngles = uprightRotation;
+
+        
+        Rigidbody rb = GetComponent<Rigidbody>();
+        if (rb != null)
+        {
+            rb.linearVelocity = Vector3.zero;
+            rb.angularVelocity = Vector3.zero;
+        }
+    }
+    
+
 }
