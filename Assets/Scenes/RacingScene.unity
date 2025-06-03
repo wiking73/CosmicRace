@@ -6419,9 +6419,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 322437e23b6dead489699cbb47274156, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  FlipCar: {fileID: 0}
+  speedText: {fileID: 0}
+  resetHeight: 1
+  resetKey: 114
   motorForce: 1000
   breakForce: 3000
   maxSteerAngle: 30
+  boostMultiplier: 3000
   frontLeftWheelCollider: {fileID: 1702385620}
   frontRightWheelCollider: {fileID: 1231849997}
   rearLeftWheelCollider: {fileID: 789070280}
