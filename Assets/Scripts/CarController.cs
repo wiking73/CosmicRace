@@ -60,6 +60,9 @@ public class CarController : MonoBehaviour
             speedText.text = Mathf.RoundToInt(speed).ToString() + " km/h";
         }
     }
+
+
+
     private void GetInput()
     {
         // Steering Input
@@ -138,6 +141,27 @@ public class CarController : MonoBehaviour
             rb.angularVelocity = Vector3.zero;
         }
     }
-    
+    public IEnumerator BoostMassAndSpeed(float massReduction, float motorBoost, float duration)
+    {
+        Rigidbody rb = GetComponent<Rigidbody>();
+        if (rb == null) yield break;
+
+        float originalMass = rb.mass;
+        float originalMotor = motorForce;
+
+        
+        rb.mass = Mathf.Max(1f, originalMass - massReduction);
+        motorForce += motorBoost;
+
+      
+        yield return new WaitForSeconds(duration);
+
+        
+        rb.mass = originalMass;
+        motorForce = originalMotor;
+    }
+
+
+
 
 }
