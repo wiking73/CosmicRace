@@ -31,6 +31,8 @@ public class CarController : MonoBehaviour
 
     private void FixedUpdate()
     {
+        if (!GameManager.Instance.raceStarted)
+            return;
         GetInput();
         HandleMotor();
         HandleSteering();

@@ -28,7 +28,7 @@ public class RaceManager : MonoBehaviour
         racers.Sort((a, b) => a.position.z.CompareTo(b.position.z)); // sortowanie po pozycji Z (na trasie od-do)
 
         int playerPosition = racers.FindIndex(r => r.name.StartsWith("Player")) + 1;
-        positionText.text = "Pozycja: " + playerPosition + " / " + racers.Count;
+        positionText.text = "Position: " + playerPosition + " / " + racers.Count;
     }
 
     public void FinishRace(GameObject racer)
@@ -42,7 +42,7 @@ public class RaceManager : MonoBehaviour
 
         if (racer.name.StartsWith("Player"))
         {
-            Debug.Log("Gracz ukonczyl wyscig");
+            Debug.Log("Player finished race!");
             raceFinished = true;
             ShowResults();
         }
