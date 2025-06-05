@@ -25,6 +25,9 @@ public class AIController : MonoBehaviour
 
     void FixedUpdate()
     {
+        if (!GameManager.Instance.raceStarted)
+            return;
+
         if (slowdownTimer > 0)
         {
             slowdownTimer -= Time.fixedDeltaTime;

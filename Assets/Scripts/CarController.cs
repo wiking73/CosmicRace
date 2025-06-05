@@ -31,6 +31,8 @@ public class CarController : MonoBehaviour
 
     private void FixedUpdate()
     {
+        if (!GameManager.Instance.raceStarted)
+            return;
         GetInput();
         HandleMotor();
         HandleSteering();
@@ -159,6 +161,10 @@ public class CarController : MonoBehaviour
         
         rb.mass = originalMass;
         motorForce = originalMotor;
+    }
+    public float GetCurrentSpeed()
+    {
+        return GetComponent<Rigidbody>().velocity.magnitude * 3.6f; 
     }
 
 
