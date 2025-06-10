@@ -1,0 +1,17 @@
+fileFormatVersion: 2
+guid: 1e0ffc15fc439f54598ab0b1774c7b02
+MonoImporter:
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 6947
+  packageName: Rock and Boulders 2
+  packageVersion: 1.2
+  assetPath: Assets/Rocks and Boulders 2/Shaders/RotateGameObject.cs
+  uploadId: 228760
