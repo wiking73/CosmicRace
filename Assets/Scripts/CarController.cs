@@ -164,7 +164,7 @@ public class CarController : MonoBehaviour
     }
     public float GetCurrentSpeed()
     {
-        return GetComponent<Rigidbody>().velocity.magnitude * 3.6f; 
+        return GetComponent<Rigidbody>().linearVelocity.magnitude * 3.6f; 
     }
 
 
