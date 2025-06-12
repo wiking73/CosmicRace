@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: f3429c51066a44d2cb5fb6526db8a4a2
+timeCreated: 1497103594
+licenseType: Store
+NativeFormatImporter:
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 91874
+  packageName: Space_Objects
+  packageVersion: 1.0
+  assetPath: Assets/Space_Objects/Materials/Turbine_Ultra_Outer.mat
+  uploadId: 187513

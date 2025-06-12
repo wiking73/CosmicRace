@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: aa5b80b5f7e1dbb49b2d1e101dc3c36f
+ShaderImporter:
+  defaultTextures: []
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 6947
+  packageName: Rock and Boulders 2
+  packageVersion: 1.2
+  assetPath: Assets/Rocks and Boulders 2/Shaders/Blend SM2.shader
+  uploadId: 228760

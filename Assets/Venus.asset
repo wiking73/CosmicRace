@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c509dbaa7b6f416409e3195321a2187e, type: 3}
+  m_Name: Venus
+  m_EditorClassIdentifier: 
+  PaletteLayers:
+  - {fileID: 8574412962073106934, guid: 1ded3ba1c5a90054e8f23ddfa62fb2b7, type: 2}
+  - {fileID: 8574412962073106934, guid: 26f30599366ab094a8ab00a8f5db5791, type: 2}
+  - {fileID: 8574412962073106934, guid: 0092c03c27d227a499f9cfb6255b3374, type: 2}
+  - {fileID: 8574412962073106934, guid: 480e69fd7af211c4a8fb5133306c2814, type: 2}
+  - {fileID: 8574412962073106934, guid: 8083ececeb9d812489f9f731a53eaedc, type: 2}
+  - {fileID: 8574412962073106934, guid: 005183243aad44f4b88332492cd65d1b, type: 2}

@@ -10,6 +10,8 @@ public class RaceManager : MonoBehaviour
     public Text positionText;
     public Text resultText;
     public GameObject resultPanel;
+    public UnityEngine.UI.Text countdownText;
+
 
     private bool raceFinished = false;
     private List<string> finishOrder = new List<string>();
@@ -28,7 +30,7 @@ public class RaceManager : MonoBehaviour
         racers.Sort((a, b) => a.position.z.CompareTo(b.position.z)); // sortowanie po pozycji Z (na trasie od-do)
 
         int playerPosition = racers.FindIndex(r => r.name.StartsWith("Player")) + 1;
-        positionText.text = "Pozycja: " + playerPosition + " / " + racers.Count;
+        positionText.text = "Position: " + playerPosition + " / " + racers.Count;
     }
 
     public void FinishRace(GameObject racer)
