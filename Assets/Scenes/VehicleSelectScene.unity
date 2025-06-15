@@ -924,10 +924,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   vehicles:
+  - {fileID: 5868067272590446128, guid: e2fc4f4d57205a84d84935205e5a9414, type: 3}
   - {fileID: 2446948841429222077, guid: 3507a04562c316643b5eaa32755b5ef9, type: 3}
-  - {fileID: 7720726507797323357, guid: e9be6b9d71ce20345b55b654f6eca5d9, type: 3}
-  - {fileID: 6645616114513181105, guid: 62010132604e8c94d96b4cb4fe6d3394, type: 3}
-  - {fileID: 6183048251904429594, guid: a82f70a5f0178974093910fc6fd84c38, type: 3}
+  - {fileID: 7444279682768645835, guid: 4aa5862aaeec8f84b855f07e9570f661, type: 3}
+  - {fileID: 8909476639364542430, guid: be9552fcc731a91499e57c7b5056d288, type: 3}
+  - {fileID: 443338240413304925, guid: 35e8420ec94c22641923292ee16be9f1, type: 3}
 --- !u!4 &1509836909
 Transform:
   m_ObjectHideFlags: 0
