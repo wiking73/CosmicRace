@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class VehicleSelectManager : MonoBehaviour
 {
@@ -62,5 +63,9 @@ public class VehicleSelectManager : MonoBehaviour
             childObjeect.transform.localRotation = Quaternion.Euler(0f, 220f, 0f);
         }
     }
-    
+
+    public void startGameButton()
+    {
+        SceneManager.LoadScene("SampleScene");
+    }
 }

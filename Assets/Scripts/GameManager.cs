@@ -11,8 +11,19 @@ public class GameManager : MonoBehaviour
 
     public TextMeshProUGUI countdownText;
 
+    public vehicleList list;
+    public GameObject startPosition;
+    // private CarController RR;
+
     private void Awake()
     {
+        Instantiate(
+            list.vehicles[PlayerPrefs.GetInt("VehiclePointer")],
+            startPosition.transform.position,
+            startPosition.transform.rotation);
+
+        // RR = GameObject.FindGameObjectWithTag("Player").GetComponent<CarController>();
+
         // Singleton
         if (Instance == null)
             Instance = this;
