@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using TMPro;
 
 
@@ -31,6 +32,9 @@ public class CarController : MonoBehaviour
 
     private void FixedUpdate()
     {
+        if (SceneManager.GetActiveScene().name == "VehicleSelectScene")
+            return;
+
         if (!GameManager.Instance.raceStarted)
             return;
         GetInput();
@@ -120,6 +124,16 @@ public class CarController : MonoBehaviour
     private void Start()
     {
         originalMotorForce = motorForce; 
+
+        if (SceneManager.GetActiveScene().name == "VehicleSelectScene")
+        {
+            Rigidbody rb = GetComponent<Rigidbody>();
+            if (rb != null)
+            {
+                rb.useGravity = false;
+                rb.isKinematic = true;
+            }
+        }
     }
     public IEnumerator ActivateBoost(float multiplier, float duration) 
     {
