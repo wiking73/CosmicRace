@@ -15,6 +15,26 @@ public class CarController : MonoBehaviour
     public TextMeshProUGUI FlipCar;
     public TextMeshProUGUI speedText;
 
+    [SerializeField] private LayerMask trackLayer;
+    [SerializeField] private float trackCheckDistance = 0.1f;
+    [SerializeField] private Transform fallbackRespawnPoint;
+    private Vector3 lastValidPosition;
+    //[SerializeField] private Transform[] respawnPoints;
+    private List<Transform> currentRespawnPoints = new List<Transform>();
+    public void SetRespawnPoints(Transform[] newPoints)
+    {
+        currentRespawnPoints = new List<Transform>(newPoints);
+    }
+
+
+
+
+    private bool isOffTrack = false;
+    private float offTrackTimer = 0f;
+    [SerializeField] private float respawnDelay = 1.5f;
+
+
+
 
     [SerializeField] private float resetHeight = 1.0f;
     [SerializeField] private KeyCode resetKey = KeyCode.R;
@@ -57,6 +77,9 @@ public class CarController : MonoBehaviour
             FlipCar.gameObject.SetActive(IsCarFlipped());
         }
         UpdateSpeedDisplay();
+        CheckTrackUnderneath();
+
+
     }
     private void UpdateSpeedDisplay()
     {
@@ -180,6 +203,93 @@ public class CarController : MonoBehaviour
     {
         return GetComponent<Rigidbody>().linearVelocity.magnitude * 3.6f; 
     }
+
+    private void RespawnToLastValid()
+    {
+        Transform bestPoint = null;
+
+        TrackChecker nearestZone = FindNearestTrackChecker();
+        if (nearestZone != null)
+        {
+            bestPoint = nearestZone.GetNearestPoint(transform.position);
+        }
+
+        if (bestPoint == null && fallbackRespawnPoint != null)
+        {
+            bestPoint = fallbackRespawnPoint;
+        }
+
+        if (bestPoint == null)
+        {
+            Debug.LogWarning("Brak dost�pnego punktu respawnu!");
+            return;
+        }
+
+        // Przenie� auto
+        transform.position = bestPoint.position + Vector3.up * 1f;
+        transform.rotation = Quaternion.Euler(0, bestPoint.eulerAngles.y, 0);
+
+        // Resetuj fizyk�
+        Rigidbody rb = GetComponent<Rigidbody>();
+        if (rb != null)
+        {
+            rb.linearVelocity = Vector3.zero;
+            rb.angularVelocity = Vector3.zero;
+        }
+
+        Debug.Log("Respawn na punkt: " + bestPoint.name);
+    }
+
+    private TrackChecker FindNearestTrackChecker()
+    {
+        TrackChecker[] zones = FindObjectsOfType<TrackChecker>();
+        float closestDist = Mathf.Infinity;
+        TrackChecker closestZone = null;
+
+        foreach (var zone in zones)
+        {
+            float dist = Vector3.Distance(transform.position, zone.transform.position);
+            if (dist < closestDist)
+            {
+                closestDist = dist;
+                closestZone = zone;
+            }
+        }
+
+        return closestZone;
+    }
+
+
+    private void CheckTrackUnderneath()
+    {
+        Ray ray = new Ray(transform.position + Vector3.up * 0.5f, Vector3.down);
+        bool onTrack = Physics.Raycast(ray, trackCheckDistance, trackLayer);
+
+        if (onTrack)
+        {
+            lastValidPosition = transform.position;
+            isOffTrack = false;
+            offTrackTimer = 0f;
+        }
+        else
+        {
+            if (!isOffTrack)
+            {
+                isOffTrack = true;
+                offTrackTimer = 0f;
+            }
+            else
+            {
+                offTrackTimer += Time.deltaTime;
+                if (offTrackTimer >= respawnDelay)
+                {
+                    RespawnToLastValid();
+                    isOffTrack = false;
+                }
+            }
+        }
+    }
+
 
 
 

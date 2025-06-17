@@ -8,7 +8,10 @@ public class AIController : MonoBehaviour
     public float acceleration = 10f;
     public float deceleration = 20f;
     public float turnSpeed = 5f;
-    public float rayDistance = 7f;
+   // public float rayDistance = 7f;
+    [SerializeField] private float rayDistance = 20f;
+    [SerializeField] private LayerMask obstacleLayers;
+
     public float collisionSlowdownTime = 2f;
     public float slowdownMultiplier = 0.5f;
 
@@ -124,8 +127,18 @@ public class AIController : MonoBehaviour
     void DetectObstacles()
     {
         RaycastHit hit;
-        if (Physics.Raycast(transform.position + Vector3.up * 0.5f, transform.forward, out hit, rayDistance))
+        Vector3 rayStart = transform.position + Vector3.up * 0.5f;
+        Vector3 rayDir = transform.forward;
+
+        Debug.DrawRay(rayStart, rayDir * rayDistance, Color.red);
+
+        if (Physics.Raycast(rayStart, rayDir, out hit, rayDistance, obstacleLayers))
         {
+            if (hit.collider.gameObject == this.gameObject)
+                return;
+
+            Debug.Log(name + " hit: " + hit.collider.name);
+
             if (hit.collider.CompareTag("Player") || hit.collider.name.StartsWith("AI"))
             {
                 Debug.Log(gameObject.name + " wykry³ przeszkodê — rozpoczyna wyprzedzanie!");
@@ -133,6 +146,8 @@ public class AIController : MonoBehaviour
             }
         }
     }
+
+
 
     void StartOvertaking()
     {
@@ -155,4 +170,15 @@ public class AIController : MonoBehaviour
             rb.AddForce(pushDir * 300f);
         }
     }
+    public void SetWaypoints(Transform[] newWaypoints, Transform[] newOvertakeWaypoints = null)
+{
+    waypoints = newWaypoints;
+    overtakeWaypoints = newOvertakeWaypoints ?? new Transform[0];
+    currentWaypointIndex = 0;
+    currentOvertakeIndex = 0;
+    isOvertaking = false;
+
+    Debug.Log(name + " zmieni³ trasê na nowe waypointy.");
+}
+
 }
