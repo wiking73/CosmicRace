@@ -1,8 +1,8 @@
 using UnityEngine;
-using UnityEngine.EventSystems; // Potrzebne do EventSystem
-using UnityEngine.UI; // Potrzebne, jeśli chcemy np. wyłączyć interakcję na Buttonach
+using UnityEngine.EventSystems;
+using UnityEngine.UI; 
 
-public class UIButtonSoundManager : MonoBehaviour // Zmieniamy nazwę na Manager
+public class UIButtonSound : MonoBehaviour 
 {
     public AudioClip clickSound;
     public AudioClip hoverSound;
