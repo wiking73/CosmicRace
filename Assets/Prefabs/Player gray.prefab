@@ -754,6 +754,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   FlipCar: {fileID: 0}
   speedText: {fileID: 0}
+  engineSoundClip: {fileID: 8300000, guid: 1cc97137787ed764d9acd73315d8f15a, type: 3}
+  minPitch: 0.8
+  maxPitch: 1.5
+  minVolume: 0.2
+  maxVolume: 1
   resetHeight: 1
   resetKey: 114
   motorForce: 1000

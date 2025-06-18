@@ -8,12 +8,24 @@ using TMPro;
 
 public class CarController : MonoBehaviour
 {
+    [Header("General")]
     private float horizontalInput, verticalInput;
     private float currentSteerAngle, currentbreakForce;
     private bool isBreaking;
     private float originalMotorForce;
     public TextMeshProUGUI FlipCar;
     public TextMeshProUGUI speedText;
+
+    [Header("Engine Sound")]
+    public AudioClip engineSoundClip;
+    public float minPitch = 0.8f;
+    public float maxPitch = 1.5f;
+    public float minVolume = 0.2f;
+    public float maxVolume = 1.0f;
+
+    private AudioSource engineAudioSource; 
+    private Rigidbody carRigidbody;
+
 
 
     [SerializeField] private float resetHeight = 1.0f;
@@ -41,6 +53,7 @@ public class CarController : MonoBehaviour
         HandleMotor();
         HandleSteering();
         UpdateWheels();
+        UpdateEngineSound();
     }
     private bool IsCarFlipped()
     {
@@ -121,9 +134,14 @@ public class CarController : MonoBehaviour
         wheelTransform.position = pos;
     }
 
+    private void Awake()
+    {
+        carRigidbody = GetComponent<Rigidbody>();
+    }
+
     private void Start()
     {
-        originalMotorForce = motorForce; 
+        originalMotorForce = motorForce;
 
         if (SceneManager.GetActiveScene().name == "VehicleSelectScene")
         {
@@ -134,6 +152,28 @@ public class CarController : MonoBehaviour
                 rb.isKinematic = true;
             }
         }
+
+        // Initialization AudioSource for enigine
+        engineAudioSource = gameObject.AddComponent<AudioSource>();
+        engineAudioSource.clip = engineSoundClip;
+        engineAudioSource.loop = true;
+        engineAudioSource.playOnAwake = false;
+        engineAudioSource.spatialBlend = 1.0f;
+        engineAudioSource.volume = minVolume;
+        engineAudioSource.pitch = minPitch;
+
+        if (engineSoundClip != null)
+        {
+            engineAudioSource.Play();
+        }
+
+        if (carRigidbody == null)
+        {
+            Debug.LogError("CarController: Rigidbody not found on this GameObject. Engine sound pitch will not work correctly.", this);
+        }
+
+        gameObject.tag = "EngineSound";
+    
     }
     public IEnumerator ActivateBoost(float multiplier, float duration) 
     {
@@ -181,7 +221,28 @@ public class CarController : MonoBehaviour
         return GetComponent<Rigidbody>().linearVelocity.magnitude * 3.6f; 
     }
 
+    void UpdateEngineSound()
+    {
+        if (engineAudioSource == null || carRigidbody == null || SFXManager.Instance == null) return;
 
+        float currentSpeed = carRigidbody.linearVelocity.magnitude;
+
+        float speedNormalized = Mathf.InverseLerp(0f, 30f, currentSpeed);
+
+        engineAudioSource.pitch = Mathf.Lerp(minPitch, maxPitch, speedNormalized);
+        engineAudioSource.volume = Mathf.Lerp(minVolume, maxVolume, speedNormalized);
+
+        engineAudioSource.mute = SFXManager.Instance.IsSFXMuted();
+
+        if (!GameManager.Instance.raceStarted && engineAudioSource.isPlaying)
+        {
+            engineAudioSource.mute = true; 
+        }
+        else if (GameManager.Instance.raceStarted && !engineAudioSource.isPlaying && !SFXManager.Instance.IsSFXMuted())
+        {
+            engineAudioSource.mute = false;
+        }
+    }
 
 
 }
