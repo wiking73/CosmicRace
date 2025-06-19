@@ -19,6 +19,7 @@ public class AIController : MonoBehaviour
     private float targetSpeed = 0f;
     private float currentSpeed = 0f;
     private float slowdownTimer = 0f;
+    public float lookAheadDistance = 5f;
 
     void Start()
     {
@@ -81,45 +82,68 @@ public class AIController : MonoBehaviour
         }
     }
 
+    private float t = 0f;
+
     void MoveAlongWaypoints()
     {
-        if (isOvertaking)
+        if (waypoints.Length < 4) return;
+
+        // Indeksy punktów dla spline
+        int p0Index = Mathf.Clamp(currentWaypointIndex - 1, 0, waypoints.Length - 1);
+        int p1Index = currentWaypointIndex;
+        int p2Index = Mathf.Clamp(currentWaypointIndex + 1, 0, waypoints.Length - 1);
+        int p3Index = Mathf.Clamp(currentWaypointIndex + 2, 0, waypoints.Length - 1);
+
+        Vector3 p0 = waypoints[p0Index].position;
+        Vector3 p1 = waypoints[p1Index].position;
+        Vector3 p2 = waypoints[p2Index].position;
+        Vector3 p3 = waypoints[p3Index].position;
+
+        // Aktualizuj parametr t w zale¿noœci od prêdkoœci i d³ugoœci odcinka
+        float segmentLength = Vector3.Distance(p1, p2);
+        t += (currentSpeed * Time.fixedDeltaTime) / segmentLength;
+
+        // Po osi¹gniêciu koñca segmentu, przejdŸ do kolejnego
+        if (t >= 1f)
         {
-            if (currentOvertakeIndex >= overtakeWaypoints.Length) return;
-
-            Vector3 targetDir = overtakeWaypoints[currentOvertakeIndex].position - transform.position;
-            targetDir.y = 0;
-            Quaternion targetRotation = Quaternion.LookRotation(targetDir);
-            transform.rotation = Quaternion.Lerp(transform.rotation, targetRotation, turnSpeed * Time.deltaTime);
-
-            rb.MovePosition(transform.position + transform.forward * currentSpeed * Time.fixedDeltaTime);
-
-            if (Vector3.Distance(transform.position, overtakeWaypoints[currentOvertakeIndex].position) < 3f)
+            t = 0f;
+            currentWaypointIndex++;
+            if (currentWaypointIndex >= waypoints.Length - 2)
             {
-                currentOvertakeIndex++;
-                if (currentOvertakeIndex >= overtakeWaypoints.Length)
-                {
-                    isOvertaking = false;
-                }
+                currentWaypointIndex = 0;
             }
+            return;
         }
-        else
-        {
-            if (currentWaypointIndex >= waypoints.Length) return;
 
-            Vector3 targetDir = waypoints[currentWaypointIndex].position - transform.position;
-            targetDir.y = 0;
-            Quaternion targetRotation = Quaternion.LookRotation(targetDir);
-            transform.rotation = Quaternion.Lerp(transform.rotation, targetRotation, turnSpeed * Time.deltaTime);
+        // Wyznacz pozycjê na spline
+        Vector3 targetPos = GetCatmullRomPosition(t, p0, p1, p2, p3);
 
-            rb.MovePosition(transform.position + transform.forward * currentSpeed * Time.fixedDeltaTime);
+        // Obracanie w kierunku celu
+        Vector3 targetDir = (targetPos - transform.position).normalized;
+        targetDir.y = 0;
 
-            if (Vector3.Distance(transform.position, waypoints[currentWaypointIndex].position) < 3f)
-            {
-                currentWaypointIndex++;
-            }
-        }
+        Vector3 newDir = Vector3.RotateTowards(transform.forward, targetDir, turnSpeed * Time.fixedDeltaTime, 0.0f);
+        transform.rotation = Quaternion.LookRotation(newDir);
+
+        // Ruch do przodu
+        rb.MovePosition(transform.position + newDir * currentSpeed * Time.fixedDeltaTime);
     }
+
+    // Catmull-Rom Spline helper
+    Vector3 GetCatmullRomPosition(float t, Vector3 p0, Vector3 p1, Vector3 p2, Vector3 p3)
+    {
+        float t2 = t * t;
+        float t3 = t2 * t;
+
+        return 0.5f * (
+            (2f * p1) +
+            (-p0 + p2) * t +
+            (2f * p0 - 5f * p1 + 4f * p2 - p3) * t2 +
+            (-p0 + 3f * p1 - 3f * p2 + p3) * t3
+        );
+    }
+
+
 
     void DetectObstacles()
     {
