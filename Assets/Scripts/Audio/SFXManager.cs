@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
+using System.Collections.Generic;
 
 public class SFXManager : MonoBehaviour
 {
@@ -11,11 +12,10 @@ public class SFXManager : MonoBehaviour
     public AudioClip hoverSound;
     public string buttonTag = "UIButtonSound";
 
-    [Header("Engine Sound Settings")]
-    public AudioSource engineAudioSourcePrefab;
-
     private AudioSource sfxAudioSource;
     private bool isSFXMuted = false;
+    
+    private List<AudioSource> activeEngineAudioSources = new List<AudioSource>();
 
     void Awake()
     {
@@ -71,19 +71,36 @@ public class SFXManager : MonoBehaviour
         }
     }
 
+    public void RegisterEngineAudioSource(AudioSource source)
+    {
+        if (source != null && !activeEngineAudioSources.Contains(source))
+        {
+            activeEngineAudioSources.Add(source);
+            source.mute = isSFXMuted;
+        }
+    }
+
+     public void UnregisterEngineAudioSource(AudioSource source)
+    {
+        if (source != null && activeEngineAudioSources.Contains(source))
+        {
+            activeEngineAudioSources.Remove(source);
+        }
+    }
+
     public void ToggleSFXSound()
     {
         isSFXMuted = !isSFXMuted;
         sfxAudioSource.mute = isSFXMuted;
-        GameObject[] engineSounds = GameObject.FindGameObjectsWithTag("EngineSound");
-        foreach (GameObject obj in engineSounds)
+        
+        foreach (AudioSource engineSource in activeEngineAudioSources)
         {
-            AudioSource engineSource = obj.GetComponent<AudioSource>();
             if (engineSource != null)
             {
                 engineSource.mute = isSFXMuted;
             }
         }
+        Debug.Log("SFX (UI and Engine) Muted: " + isSFXMuted);
     }
 
     public bool IsSFXMuted()

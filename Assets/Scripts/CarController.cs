@@ -137,6 +137,21 @@ public class CarController : MonoBehaviour
     private void Awake()
     {
         carRigidbody = GetComponent<Rigidbody>();
+
+        engineAudioSource = gameObject.AddComponent<AudioSource>();
+        engineAudioSource.clip = engineSoundClip;
+        engineAudioSource.loop = true;
+        engineAudioSource.playOnAwake = false;
+        engineAudioSource.spatialBlend = 1.0f;
+        engineAudioSource.volume = minVolume;
+        engineAudioSource.pitch = minPitch;
+
+
+        engineAudioSource.rolloffMode = AudioRolloffMode.Logarithmic;
+        engineAudioSource.minDistance = 5f;
+        engineAudioSource.maxDistance = 200f;
+
+        originalMotorForce = motorForce;
     }
 
     private void Start()
@@ -153,43 +168,45 @@ public class CarController : MonoBehaviour
             }
         }
 
-        // Initialization AudioSource for enigine
-        engineAudioSource = gameObject.AddComponent<AudioSource>();
-        engineAudioSource.clip = engineSoundClip;
-        engineAudioSource.loop = true;
-        engineAudioSource.playOnAwake = false;
-        engineAudioSource.spatialBlend = 1.0f;
-        engineAudioSource.volume = minVolume;
-        engineAudioSource.pitch = minPitch;
-
         if (engineSoundClip != null)
         {
             engineAudioSource.Play();
         }
 
-        if (carRigidbody == null)
+        if (SFXManager.Instance != null)
         {
-            Debug.LogError("CarController: Rigidbody not found on this GameObject. Engine sound pitch will not work correctly.", this);
+            SFXManager.Instance.RegisterEngineAudioSource(engineAudioSource);
         }
-
-        gameObject.tag = "EngineSound";
-    
+        else
+        {
+            Debug.LogError("CarController: SFXManager.Instance is null. Cannot register engine audio source.", this);
+        }   
     }
-    public IEnumerator ActivateBoost(float multiplier, float duration) 
+
+    private void OnDestroy()
+    {
+        if (SFXManager.Instance != null && engineAudioSource != null)
+        {
+            SFXManager.Instance.UnregisterEngineAudioSource(engineAudioSource);
+        }
+    }
+
+    public IEnumerator ActivateBoost(float multiplier, float duration)
     {
         float originalMotorForce = motorForce;
-        motorForce += multiplier; 
+        motorForce += multiplier;
         yield return new WaitForSeconds(duration);
         motorForce = originalMotorForce;
     }
+    
     private void ResetCarOrientation()
     {
-        
-        transform.position += Vector3.up * resetHeight;    
+
+        transform.position += Vector3.up * resetHeight;
         Vector3 uprightRotation = new Vector3(0, transform.eulerAngles.y, 0);
         transform.eulerAngles = uprightRotation;
 
-        
+
         Rigidbody rb = GetComponent<Rigidbody>();
         if (rb != null)
         {
@@ -234,13 +251,23 @@ public class CarController : MonoBehaviour
 
         engineAudioSource.mute = SFXManager.Instance.IsSFXMuted();
 
-        if (!GameManager.Instance.raceStarted && engineAudioSource.isPlaying)
+        if (GameManager.Instance != null) // Upewnij się, że GameManager istnieje
         {
-            engineAudioSource.mute = true; 
+            if (!GameManager.Instance.raceStarted && engineAudioSource.isPlaying)
+            {
+                engineAudioSource.mute = true;
+            }
+            else if (GameManager.Instance.raceStarted && !engineAudioSource.isPlaying && !SFXManager.Instance.IsSFXMuted())
+            {
+                engineAudioSource.mute = false;
+            }
         }
-        else if (GameManager.Instance.raceStarted && !engineAudioSource.isPlaying && !SFXManager.Instance.IsSFXMuted())
+        else
         {
-            engineAudioSource.mute = false;
+            if (!SFXManager.Instance.IsSFXMuted())
+            {
+                engineAudioSource.mute = false;
+            }
         }
     }
 
