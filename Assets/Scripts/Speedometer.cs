@@ -10,12 +10,33 @@ public class Speedometer : MonoBehaviour
 
     void Start()
     {
-        needleTransform.rotation = Quaternion.Euler(0, 0, minAngle);
+        if (GameManager.Instance != null && GameManager.Instance.playerCarInstance != null)
+        {
+            carRigidbody = GameManager.Instance.playerCarInstance.GetComponent<Rigidbody>();
+        }
+        else
+        {
+            Debug.LogError("Speedometer: Could not find player car instance. Speedometer will not function.", this);
+            enabled = false;
+            return;
+        }
+
+        if (needleTransform != null)
+        {
+            needleTransform.rotation = Quaternion.Euler(0, 0, minAngle);
+        }
+        else
+        {
+            Debug.LogWarning("Speedometer: needleTransform is not assigned. Speedometer visual will not work.", this);
+        }
     }
     void Update()
     {
-        float speed = carRigidbody.GetComponent<CarController>().GetCurrentSpeed();
-        float angle = Mathf.Lerp(minAngle, maxAngle, speed / maxSpeed);
-        needleTransform.rotation = Quaternion.Euler(0, 0, angle);
+        if (carRigidbody != null && needleTransform != null)
+        {
+            float speed = carRigidbody.GetComponent<CarController>().GetCurrentSpeed();
+            float angle = Mathf.Lerp(minAngle, maxAngle, speed / maxSpeed);
+            needleTransform.rotation = Quaternion.Euler(0, 0, angle);
+        }
     }
 }

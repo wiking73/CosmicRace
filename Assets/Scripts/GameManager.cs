@@ -1,5 +1,6 @@
 using UnityEngine;
 using TMPro;
+using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
@@ -11,24 +12,57 @@ public class GameManager : MonoBehaviour
 
     public TextMeshProUGUI countdownText;
 
-    public vehicleList list;
-    public GameObject startPosition;
-    // private CarController RR;
+    [HideInInspector] 
+    public GameObject playerCarInstance;
+    
+    public Vector3 defaultSpawnPosition = new Vector3(4669.7f, 11.3f, 2133.91f);
+    public Vector3 defaultSpawnRotationEuler = new Vector3(4.852f, -840.477f, 1.934f);
+
 
     private void Awake()
     {
-        Instantiate(
-            list.vehicles[PlayerPrefs.GetInt("VehiclePointer")],
-            startPosition.transform.position,
-            startPosition.transform.rotation);
-
-        // RR = GameObject.FindGameObjectWithTag("Player").GetComponent<CarController>();
-
-        // Singleton
         if (Instance == null)
+        {
             Instance = this;
+        }
         else
+        {
             Destroy(gameObject);
+            return; 
+        }
+
+        Vector3 spawnPosition;
+        Quaternion spawnRotation;
+
+        GameObject existingPlayer = GameObject.FindWithTag("Player"); 
+
+        if (existingPlayer != null)
+        {
+            spawnPosition = existingPlayer.transform.position;
+            spawnRotation = existingPlayer.transform.rotation;
+            Destroy(existingPlayer); 
+            Debug.Log("GameManager: Existing 'Player' object found and removed. Spawning new car at its position.");
+        }
+        else
+        {
+            spawnPosition = defaultSpawnPosition;
+            spawnRotation = Quaternion.Euler(defaultSpawnRotationEuler); 
+            Debug.LogWarning("GameManager: No 'Player' object with tag 'Player' found. Spawning at default position from GameManager inspector.");
+        }
+
+        if (VehicleSelectManager.SelectedCarPrefab != null)
+        {
+            playerCarInstance = Instantiate(
+                VehicleSelectManager.SelectedCarPrefab,
+                spawnPosition, 
+                spawnRotation);
+
+            playerCarInstance.name = "PlayerCar"; 
+        }
+        else
+        {
+            Debug.LogError("GameManager: SelectedCarPrefab is null! Cannot spawn car. Check VehicleSelectManager.");
+        }
     }
 
     void Update()

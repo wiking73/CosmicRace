@@ -95,7 +95,7 @@ public class CarController : MonoBehaviour
     }
     private void UpdateSpeedDisplay()
     {
-        if (speedText != null)
+        if (speedText != null && carRigidbody != null)
         {
             float speed = GetComponent<Rigidbody>().linearVelocity.magnitude * 3.6f; 
             speedText.text = Mathf.RoundToInt(speed).ToString() + " km/h";
