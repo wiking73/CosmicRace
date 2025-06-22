@@ -88,6 +88,14 @@ public class AIController : MonoBehaviour
     {
         if (waypoints.Length < 4) return;
 
+        if (currentWaypointIndex >= waypoints.Length - 1)
+        {
+            // Ostatni waypoint osi¹gniêty — zatrzymaj pojazd
+            currentSpeed = 0f;
+            targetSpeed = 0f;
+            return;
+        }
+
         // Indeksy punktów dla spline
         int p0Index = Mathf.Clamp(currentWaypointIndex - 1, 0, waypoints.Length - 1);
         int p1Index = currentWaypointIndex;
@@ -108,10 +116,6 @@ public class AIController : MonoBehaviour
         {
             t = 0f;
             currentWaypointIndex++;
-            if (currentWaypointIndex >= waypoints.Length - 2)
-            {
-                currentWaypointIndex = 0;
-            }
             return;
         }
 
