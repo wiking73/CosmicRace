@@ -13,7 +13,6 @@ public class CarController : MonoBehaviour
     private float currentSteerAngle, currentbreakForce;
     private bool isBreaking;
     private float originalMotorForce;
-    public TextMeshProUGUI FlipCar;
     public TextMeshProUGUI speedText;
 
     [Header("Engine Sound")]
@@ -76,7 +75,10 @@ public class CarController : MonoBehaviour
     }
     private bool IsCarFlipped()
     {
-        return Vector3.Dot(transform.up, Vector3.down) > 0.5f;
+        float angle = Vector3.Angle(transform.up, Vector3.up);
+        float flipThresholdAngle = 60f;
+
+        return angle > flipThresholdAngle;
     }
     private void Update()
     {
@@ -84,13 +86,13 @@ public class CarController : MonoBehaviour
         {
             ResetCarOrientation();
         }
-        if (FlipCar != null)
+        if (UIManager.Instance != null) 
         {
-            FlipCar.gameObject.SetActive(IsCarFlipped());
+            UIManager.Instance.ShowFlipCarPrompt(IsCarFlipped()); 
         }
+
         UpdateSpeedDisplay();
         CheckTrackUnderneath();
-
 
     }
     private void UpdateSpeedDisplay()
@@ -209,6 +211,10 @@ public class CarController : MonoBehaviour
         {
             SFXManager.Instance.UnregisterEngineAudioSource(engineAudioSource);
         }
+        if (UIManager.Instance != null)
+        {
+            UIManager.Instance.ShowFlipCarPrompt(false);
+        }
     }
 
     public IEnumerator ActivateBoost(float multiplier, float duration)
@@ -231,6 +237,10 @@ public class CarController : MonoBehaviour
         {
             rb.linearVelocity = Vector3.zero;
             rb.angularVelocity = Vector3.zero;
+        }
+        if (UIManager.Instance != null)
+        {
+            UIManager.Instance.ShowFlipCarPrompt(false);
         }
     }
     public IEnumerator BoostMassAndSpeed(float massReduction, float motorBoost, float duration)
