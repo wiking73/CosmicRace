@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections;
 
 public class AIController : MonoBehaviour
 {
@@ -8,7 +9,10 @@ public class AIController : MonoBehaviour
     public float acceleration = 10f;
     public float deceleration = 20f;
     public float turnSpeed = 5f;
-    public float rayDistance = 7f;
+   // public float rayDistance = 7f;
+    [SerializeField] private float rayDistance = 20f;
+    [SerializeField] private LayerMask obstacleLayers;
+
     public float collisionSlowdownTime = 2f;
     public float slowdownMultiplier = 0.5f;
 
@@ -19,6 +23,7 @@ public class AIController : MonoBehaviour
     private float targetSpeed = 0f;
     private float currentSpeed = 0f;
     private float slowdownTimer = 0f;
+    public float lookAheadDistance = 5f;
 
     void Start()
     {
@@ -26,21 +31,21 @@ public class AIController : MonoBehaviour
 
         if (gameObject.name.Contains("Red"))
         {
-            maxSpeed = 25f;
-            acceleration = 12f;
-            deceleration = 25f;
+            maxSpeed = 36f;
+            acceleration = 25f;
+            deceleration = 30f;
         }
         else if (gameObject.name.Contains("Yellow"))
         {
-            maxSpeed = 22f;
-            acceleration = 10f;
-            deceleration = 22f;
+            maxSpeed = 38f;
+            acceleration = 30f;
+            deceleration = 30f;
         }
         else if (gameObject.name.Contains("Violet"))
         {
-            maxSpeed = 20f;
-            acceleration = 9f;
-            deceleration = 20f;
+            maxSpeed = 34f;
+            acceleration = 45f;
+            deceleration = 30f;
         }
 
         targetSpeed = maxSpeed;
@@ -48,12 +53,9 @@ public class AIController : MonoBehaviour
 
     void FixedUpdate()
     {
-        if (!GameManager.Instance.raceStarted)
+        if (!GameManager.Instance.raceStarted || !aiActive)
             return;
-<<<<<<< HEAD
-=======
 
->>>>>>> 6aece319315ef7dcbdfc8f4c98500765773b17db
         if (slowdownTimer > 0)
         {
             slowdownTimer -= Time.fixedDeltaTime;
@@ -84,51 +86,149 @@ public class AIController : MonoBehaviour
         }
     }
 
+<<<<<<< HEAD
+    private float t = 0f;
+
     void MoveAlongWaypoints()
     {
-        if (isOvertaking)
+        if (waypoints.Length < 4) return;
+
+        if (currentWaypointIndex >= waypoints.Length - 1)
         {
-            if (currentOvertakeIndex >= overtakeWaypoints.Length) return;
-
-            Vector3 targetDir = overtakeWaypoints[currentOvertakeIndex].position - transform.position;
-            targetDir.y = 0;
-            Quaternion targetRotation = Quaternion.LookRotation(targetDir);
-            transform.rotation = Quaternion.Lerp(transform.rotation, targetRotation, turnSpeed * Time.deltaTime);
-
-            rb.MovePosition(transform.position + transform.forward * currentSpeed * Time.fixedDeltaTime);
-
-            if (Vector3.Distance(transform.position, overtakeWaypoints[currentOvertakeIndex].position) < 3f)
-            {
-                currentOvertakeIndex++;
-                if (currentOvertakeIndex >= overtakeWaypoints.Length)
-                {
-                    isOvertaking = false;
-                }
-            }
+            // Ostatni waypoint osi¹gniêty — zatrzymaj pojazd
+            currentSpeed = 0f;
+            targetSpeed = 0f;
+            return;
         }
-        else
+
+        // Indeksy punktów dla spline
+        int p0Index = Mathf.Clamp(currentWaypointIndex - 1, 0, waypoints.Length - 1);
+        int p1Index = currentWaypointIndex;
+        int p2Index = Mathf.Clamp(currentWaypointIndex + 1, 0, waypoints.Length - 1);
+        int p3Index = Mathf.Clamp(currentWaypointIndex + 2, 0, waypoints.Length - 1);
+
+        Vector3 p0 = waypoints[p0Index].position;
+        Vector3 p1 = waypoints[p1Index].position;
+        Vector3 p2 = waypoints[p2Index].position;
+        Vector3 p3 = waypoints[p3Index].position;
+
+        // Aktualizuj parametr t w zale¿noœci od prêdkoœci i d³ugoœci odcinka
+        float segmentLength = Vector3.Distance(p1, p2);
+        t += (currentSpeed * Time.fixedDeltaTime) / segmentLength;
+
+        // Po osi¹gniêciu koñca segmentu, przejdŸ do kolejnego
+        if (t >= 1f)
         {
-            if (currentWaypointIndex >= waypoints.Length) return;
+            t = 0f;
+            currentWaypointIndex++;
+            return;
+=======
+    public IEnumerator BoostMassAndSpeed(float addedMass, float addedSpeed, float duration)
+    {
+        float originalSpeed = maxSpeed;
+        float originalMass = rb.mass;
 
-            Vector3 targetDir = waypoints[currentWaypointIndex].position - transform.position;
-            targetDir.y = 0;
-            Quaternion targetRotation = Quaternion.LookRotation(targetDir);
-            transform.rotation = Quaternion.Lerp(transform.rotation, targetRotation, turnSpeed * Time.deltaTime);
+        maxSpeed += addedSpeed;
+        targetSpeed = maxSpeed;
+        rb.mass += addedMass;
 
-            rb.MovePosition(transform.position + transform.forward * currentSpeed * Time.fixedDeltaTime);
+        yield return new WaitForSeconds(duration);
 
-            if (Vector3.Distance(transform.position, waypoints[currentWaypointIndex].position) < 3f)
-            {
-                currentWaypointIndex++;
-            }
-        }
+        maxSpeed = originalSpeed;
+        targetSpeed = maxSpeed;
+        rb.mass = originalMass;
+
+        Debug.Log(name + " zakoñczy³ boost.");
     }
+
+    void MoveAlongWaypoints()
+    {
+        Transform[] currentPath = isOvertaking ? overtakeWaypoints : waypoints;
+        int currentIndex = isOvertaking ? currentOvertakeIndex : currentWaypointIndex;
+
+        if (currentIndex >= currentPath.Length) return;
+
+        Vector3 targetPos = currentPath[currentIndex].position;
+        Vector3 flatTargetDir = targetPos - transform.position;
+        flatTargetDir.y = 0;
+
+        float angleToTarget = Vector3.Angle(transform.forward, flatTargetDir.normalized);
+
+        
+        float speedFactor = Mathf.Clamp01(1f - (angleToTarget / 90f)); 
+        targetSpeed = Mathf.Lerp(maxSpeed * 0.4f, maxSpeed, speedFactor);
+
+        
+        float dynamicTurnSpeed = Mathf.Lerp(turnSpeed * 0.3f, turnSpeed, speedFactor);
+
+        Quaternion targetRotation = Quaternion.LookRotation(flatTargetDir);
+        transform.rotation = Quaternion.Lerp(transform.rotation, targetRotation, dynamicTurnSpeed * Time.deltaTime);
+
+        rb.MovePosition(transform.position + transform.forward * currentSpeed * Time.fixedDeltaTime);
+
+        float distance = flatTargetDir.magnitude;
+        float dot = Vector3.Dot(transform.forward, flatTargetDir.normalized);
+
+        if (distance < 3f || dot < 0f)
+        {
+            if (isOvertaking)
+                currentOvertakeIndex++;
+            else
+                currentWaypointIndex++;
+
+           
+            targetSpeed = maxSpeed;
+>>>>>>> bcc21f26ddf4a959f78d15eda879193699c9c941
+        }
+
+        // Wyznacz pozycjê na spline
+        Vector3 targetPos = GetCatmullRomPosition(t, p0, p1, p2, p3);
+
+        // Obracanie w kierunku celu
+        Vector3 targetDir = (targetPos - transform.position).normalized;
+        targetDir.y = 0;
+
+        Vector3 newDir = Vector3.RotateTowards(transform.forward, targetDir, turnSpeed * Time.fixedDeltaTime, 0.0f);
+        transform.rotation = Quaternion.LookRotation(newDir);
+
+        // Ruch do przodu
+        rb.MovePosition(transform.position + newDir * currentSpeed * Time.fixedDeltaTime);
+    }
+
+<<<<<<< HEAD
+    // Catmull-Rom Spline helper
+    Vector3 GetCatmullRomPosition(float t, Vector3 p0, Vector3 p1, Vector3 p2, Vector3 p3)
+    {
+        float t2 = t * t;
+        float t3 = t2 * t;
+
+        return 0.5f * (
+            (2f * p1) +
+            (-p0 + p2) * t +
+            (2f * p0 - 5f * p1 + 4f * p2 - p3) * t2 +
+            (-p0 + 3f * p1 - 3f * p2 + p3) * t3
+        );
+    }
+
+=======
+>>>>>>> bcc21f26ddf4a959f78d15eda879193699c9c941
+
 
     void DetectObstacles()
     {
         RaycastHit hit;
-        if (Physics.Raycast(transform.position + Vector3.up * 0.5f, transform.forward, out hit, rayDistance))
+        Vector3 rayStart = transform.position + Vector3.up * 0.5f;
+        Vector3 rayDir = transform.forward;
+
+        Debug.DrawRay(rayStart, rayDir * rayDistance, Color.red);
+
+        if (Physics.Raycast(rayStart, rayDir, out hit, rayDistance, obstacleLayers))
         {
+            if (hit.collider.gameObject == this.gameObject)
+                return;
+
+            Debug.Log(name + " hit: " + hit.collider.name);
+
             if (hit.collider.CompareTag("Player") || hit.collider.name.StartsWith("AI"))
             {
                 Debug.Log(gameObject.name + " wykry³ przeszkodê — rozpoczyna wyprzedzanie!");
@@ -136,6 +236,8 @@ public class AIController : MonoBehaviour
             }
         }
     }
+
+
 
     void StartOvertaking()
     {
@@ -158,4 +260,25 @@ public class AIController : MonoBehaviour
             rb.AddForce(pushDir * 300f);
         }
     }
+    public void SetWaypoints(Transform[] newWaypoints, Transform[] newOvertakeWaypoints = null)
+{
+    waypoints = newWaypoints;
+    overtakeWaypoints = newOvertakeWaypoints ?? new Transform[0];
+    currentWaypointIndex = 0;
+    currentOvertakeIndex = 0;
+    isOvertaking = false;
+
+    Debug.Log(name + " zmieni³ trasê na nowe waypointy.");
+}
+    public bool aiActive = true;
+    public IEnumerator StopTemporarily(float duration)
+    {
+        bool originalState = aiActive; 
+        aiActive = false;
+
+        yield return new WaitForSeconds(duration);
+
+        aiActive = originalState;
+    }
+
 }

@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections;
 
 public class AIController : MonoBehaviour
 {
@@ -8,7 +9,10 @@ public class AIController : MonoBehaviour
     public float acceleration = 10f;
     public float deceleration = 20f;
     public float turnSpeed = 5f;
-    public float rayDistance = 7f;
+    // public float rayDistance = 7f;
+    [SerializeField] private float rayDistance = 20f;
+    [SerializeField] private LayerMask obstacleLayers;
+
     public float collisionSlowdownTime = 2f;
     public float slowdownMultiplier = 0.5f;
 
@@ -20,6 +24,7 @@ public class AIController : MonoBehaviour
     private float currentSpeed = 0f;
     private float slowdownTimer = 0f;
     public float lookAheadDistance = 5f;
+    private float t = 0f;
 
     void Start()
     {
@@ -27,21 +32,21 @@ public class AIController : MonoBehaviour
 
         if (gameObject.name.Contains("Red"))
         {
-            maxSpeed = 25f;
-            acceleration = 12f;
-            deceleration = 25f;
+            maxSpeed = 36f;
+            acceleration = 25f;
+            deceleration = 30f;
         }
         else if (gameObject.name.Contains("Yellow"))
         {
-            maxSpeed = 22f;
-            acceleration = 10f;
-            deceleration = 22f;
+            maxSpeed = 38f;
+            acceleration = 30f;
+            deceleration = 30f;
         }
         else if (gameObject.name.Contains("Violet"))
         {
-            maxSpeed = 20f;
-            acceleration = 9f;
-            deceleration = 20f;
+            maxSpeed = 34f;
+            acceleration = 45f;
+            deceleration = 30f;
         }
 
         targetSpeed = maxSpeed;
@@ -49,7 +54,7 @@ public class AIController : MonoBehaviour
 
     void FixedUpdate()
     {
-        if (!GameManager.Instance.raceStarted)
+        if (!GameManager.Instance.raceStarted || !aiActive)
             return;
 
         if (slowdownTimer > 0)
@@ -82,7 +87,23 @@ public class AIController : MonoBehaviour
         }
     }
 
-    private float t = 0f;
+    public IEnumerator BoostMassAndSpeed(float addedMass, float addedSpeed, float duration)
+    {
+        float originalSpeed = maxSpeed;
+        float originalMass = rb.mass;
+
+        maxSpeed += addedSpeed;
+        targetSpeed = maxSpeed;
+        rb.mass += addedMass;
+
+        yield return new WaitForSeconds(duration);
+
+        maxSpeed = originalSpeed;
+        targetSpeed = maxSpeed;
+        rb.mass = originalMass;
+
+        Debug.Log(name + " zakoÅ„czyÅ‚ boost.");
+    }
 
     void MoveAlongWaypoints()
     {
@@ -90,13 +111,13 @@ public class AIController : MonoBehaviour
 
         if (currentWaypointIndex >= waypoints.Length - 1)
         {
-            // Ostatni waypoint osi¹gniêty — zatrzymaj pojazd
+            // Ostatni waypoint osiÄ…gniÄ™ty - zatrzymaj pojazd
             currentSpeed = 0f;
             targetSpeed = 0f;
             return;
         }
 
-        // Indeksy punktów dla spline
+        // Indeksy punktÃ³w dla spline
         int p0Index = Mathf.Clamp(currentWaypointIndex - 1, 0, waypoints.Length - 1);
         int p1Index = currentWaypointIndex;
         int p2Index = Mathf.Clamp(currentWaypointIndex + 1, 0, waypoints.Length - 1);
@@ -107,11 +128,11 @@ public class AIController : MonoBehaviour
         Vector3 p2 = waypoints[p2Index].position;
         Vector3 p3 = waypoints[p3Index].position;
 
-        // Aktualizuj parametr t w zale¿noœci od prêdkoœci i d³ugoœci odcinka
+        // Aktualizuj parametr t w zaleÅ¼noÅ›ci od prÄ™dkoÅ›ci i dÅ‚ugoÅ›ci odcinka
         float segmentLength = Vector3.Distance(p1, p2);
         t += (currentSpeed * Time.fixedDeltaTime) / segmentLength;
 
-        // Po osi¹gniêciu koñca segmentu, przejdŸ do kolejnego
+        // Po osiÄ…gniÄ™ciu koÅ„ca segmentu, przejdÅº do kolejnego
         if (t >= 1f)
         {
             t = 0f;
@@ -119,7 +140,7 @@ public class AIController : MonoBehaviour
             return;
         }
 
-        // Wyznacz pozycjê na spline
+        // Wyznacz pozycjï¿½ na spline
         Vector3 targetPos = GetCatmullRomPosition(t, p0, p1, p2, p3);
 
         // Obracanie w kierunku celu
@@ -152,11 +173,20 @@ public class AIController : MonoBehaviour
     void DetectObstacles()
     {
         RaycastHit hit;
-        if (Physics.Raycast(transform.position + Vector3.up * 0.5f, transform.forward, out hit, rayDistance))
+        Vector3 rayStart = transform.position + Vector3.up * 0.5f;
+        Vector3 rayDir = transform.forward;
+
+        Debug.DrawRay(rayStart, rayDir * rayDistance, Color.red);
+
+        if (Physics.Raycast(rayStart, rayDir, out hit, rayDistance, obstacleLayers))
         {
+            if (hit.collider.gameObject == this.gameObject)
+                return;
+
+            Debug.Log(name + " hit: " + hit.collider.name);
             if (hit.collider.CompareTag("Player") || hit.collider.name.StartsWith("AI"))
             {
-                Debug.Log(gameObject.name + " wykry³ przeszkodê — rozpoczyna wyprzedzanie!");
+                Debug.Log(gameObject.name + " wykryÅ‚ przeszkodÄ™ i rozpoczyna wyprzedzanie!");
                 StartOvertaking();
             }
         }
@@ -175,12 +205,33 @@ public class AIController : MonoBehaviour
     {
         if (collision.gameObject.CompareTag("Player"))
         {
-            Debug.Log(gameObject.name + " zderzy³ siê z graczem!");
+            Debug.Log(gameObject.name + " zderzyï¿½ siï¿½ z graczem!");
             targetSpeed = maxSpeed * slowdownMultiplier;
             slowdownTimer = collisionSlowdownTime;
 
             Vector3 pushDir = (transform.position - collision.transform.position).normalized;
             rb.AddForce(pushDir * 300f);
         }
+    }
+
+    public void SetWaypoints(Transform[] newWaypoints, Transform[] newOvertakeWaypoints = null)
+    {
+        waypoints = newWaypoints;
+        overtakeWaypoints = newOvertakeWaypoints ?? new Transform[0];
+        currentWaypointIndex = 0;
+        currentOvertakeIndex = 0;
+        isOvertaking = false;
+
+        Debug.Log(name + " zmieniÅ‚ trasÄ™ na nowe waypointy.");
+    }
+    public bool aiActive = true;
+    public IEnumerator StopTemporarily(float duration)
+    {
+        bool originalState = aiActive; 
+        aiActive = false;
+
+        yield return new WaitForSeconds(duration);
+
+        aiActive = originalState;
     }
 }
