@@ -15,6 +15,26 @@ public class CarController : MonoBehaviour
     public TextMeshProUGUI FlipCar;
     public TextMeshProUGUI speedText;
 
+    [SerializeField] private LayerMask trackLayer;
+    [SerializeField] private float trackCheckDistance = 0.1f;
+    [SerializeField] private Transform fallbackRespawnPoint;
+    private Vector3 lastValidPosition;
+    //[SerializeField] private Transform[] respawnPoints;
+    private List<Transform> currentRespawnPoints = new List<Transform>();
+    public void SetRespawnPoints(Transform[] newPoints)
+    {
+        currentRespawnPoints = new List<Transform>(newPoints);
+    }
+
+
+
+
+    private bool isOffTrack = false;
+    private float offTrackTimer = 0f;
+    [SerializeField] private float respawnDelay = 1.5f;
+
+
+
 
     [SerializeField] private float resetHeight = 1.0f;
     [SerializeField] private KeyCode resetKey = KeyCode.R;
@@ -57,6 +77,9 @@ public class CarController : MonoBehaviour
             FlipCar.gameObject.SetActive(IsCarFlipped());
         }
         UpdateSpeedDisplay();
+        CheckTrackUnderneath();
+
+
     }
     private void UpdateSpeedDisplay()
     {
@@ -181,7 +204,144 @@ public class CarController : MonoBehaviour
         return GetComponent<Rigidbody>().linearVelocity.magnitude * 3.6f; 
     }
 
+    private void RespawnToLastValid()
+    {
+        Transform bestPoint = null;
+
+        TrackChecker nearestZone = FindNearestTrackChecker();
+        if (nearestZone != null)
+        {
+            bestPoint = nearestZone.GetNearestPoint(transform.position);
+        }
+
+        if (bestPoint == null && fallbackRespawnPoint != null)
+        {
+            bestPoint = fallbackRespawnPoint;
+        }
+
+        if (bestPoint == null)
+        {
+            Debug.LogWarning("Brak dostï¿½pnego punktu respawnu!");
+            return;
+        }
+
+        
+        transform.position = bestPoint.position + Vector3.up * 1f;
+        transform.rotation = Quaternion.Euler(0, bestPoint.eulerAngles.y, 0);
+
+        
+        Rigidbody rb = GetComponent<Rigidbody>();
+        if (rb != null)
+        {
+            rb.linearVelocity = Vector3.zero;
+            rb.angularVelocity = Vector3.zero;
+        }
+
+        Debug.Log("Respawn na punkt: " + bestPoint.name);
+    }
+
+    private TrackChecker FindNearestTrackChecker()
+    {
+        TrackChecker[] zones = FindObjectsOfType<TrackChecker>();
+        float closestDist = Mathf.Infinity;
+        TrackChecker closestZone = null;
+
+        foreach (var zone in zones)
+        {
+            float dist = Vector3.Distance(transform.position, zone.transform.position);
+            if (dist < closestDist)
+            {
+                closestDist = dist;
+                closestZone = zone;
+            }
+        }
+
+        return closestZone;
+    }
 
 
+    private void CheckTrackUnderneath()
+    {
+        Ray ray = new Ray(transform.position + Vector3.up * 0.5f, Vector3.down);
+        bool onTrack = Physics.Raycast(ray, trackCheckDistance, trackLayer);
 
+        if (onTrack)
+        {
+            lastValidPosition = transform.position;
+            isOffTrack = false;
+            offTrackTimer = 0f;
+        }
+        else
+        {
+            if (!isOffTrack)
+            {
+                isOffTrack = true;
+                offTrackTimer = 0f;
+            }
+            else
+            {
+                offTrackTimer += Time.deltaTime;
+                if (offTrackTimer >= respawnDelay)
+                {
+                    RespawnToLastValid();
+                    isOffTrack = false;
+                }
+            }
+        }
+    }
+
+
+    public IEnumerator FreezeAndTeleport(float duration)
+    {
+        Rigidbody rb = GetComponent<Rigidbody>();
+
+        if (rb != null)
+        {
+            rb.linearVelocity = Vector3.zero;
+            rb.angularVelocity = Vector3.zero;
+            rb.isKinematic = true; 
+        }
+
+        yield return new WaitForSeconds(duration * 0.5f); 
+
+        RespawnToLastValid(); 
+
+        yield return new WaitForSeconds(duration * 0.5f); 
+
+        if (rb != null)
+        {
+            rb.isKinematic = false; 
+        }
+    }
+
+    public IEnumerator FreezeCar(float duration)
+    {
+        Rigidbody rb = GetComponent<Rigidbody>();
+        if (rb != null)
+        {
+            float originalMotor = motorForce;
+
+            rb.linearVelocity = Vector3.zero;
+            rb.angularVelocity = Vector3.zero;
+            rb.isKinematic = true;
+            motorForce = 0f;
+
+            
+            if (FlipCar != null)
+            {
+                FlipCar.text = "Zatrzymano przez przeszkodê!";
+                FlipCar.gameObject.SetActive(true);
+            }
+
+            yield return new WaitForSeconds(duration);
+
+            rb.isKinematic = false;
+            motorForce = originalMotor;
+
+            if (FlipCar != null)
+            {
+                FlipCar.gameObject.SetActive(false);
+            }
+        }
+    }
 }

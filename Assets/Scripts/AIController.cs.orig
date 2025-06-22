@@ -9,7 +9,11 @@ public class AIController : MonoBehaviour
     public float acceleration = 10f;
     public float deceleration = 20f;
     public float turnSpeed = 5f;
+<<<<<<< HEAD
+    // public float rayDistance = 7f;
+=======
    // public float rayDistance = 7f;
+>>>>>>> bcc21f26ddf4a959f78d15eda879193699c9c941
     [SerializeField] private float rayDistance = 20f;
     [SerializeField] private LayerMask obstacleLayers;
 
@@ -24,6 +28,7 @@ public class AIController : MonoBehaviour
     private float currentSpeed = 0f;
     private float slowdownTimer = 0f;
     public float lookAheadDistance = 5f;
+    private float t = 0f;
 
     void Start()
     {
@@ -86,43 +91,6 @@ public class AIController : MonoBehaviour
         }
     }
 
-<<<<<<< HEAD
-    private float t = 0f;
-
-    void MoveAlongWaypoints()
-    {
-        if (waypoints.Length < 4) return;
-
-        if (currentWaypointIndex >= waypoints.Length - 1)
-        {
-            // Ostatni waypoint osi¹gniêty — zatrzymaj pojazd
-            currentSpeed = 0f;
-            targetSpeed = 0f;
-            return;
-        }
-
-        // Indeksy punktów dla spline
-        int p0Index = Mathf.Clamp(currentWaypointIndex - 1, 0, waypoints.Length - 1);
-        int p1Index = currentWaypointIndex;
-        int p2Index = Mathf.Clamp(currentWaypointIndex + 1, 0, waypoints.Length - 1);
-        int p3Index = Mathf.Clamp(currentWaypointIndex + 2, 0, waypoints.Length - 1);
-
-        Vector3 p0 = waypoints[p0Index].position;
-        Vector3 p1 = waypoints[p1Index].position;
-        Vector3 p2 = waypoints[p2Index].position;
-        Vector3 p3 = waypoints[p3Index].position;
-
-        // Aktualizuj parametr t w zale¿noœci od prêdkoœci i d³ugoœci odcinka
-        float segmentLength = Vector3.Distance(p1, p2);
-        t += (currentSpeed * Time.fixedDeltaTime) / segmentLength;
-
-        // Po osi¹gniêciu koñca segmentu, przejdŸ do kolejnego
-        if (t >= 1f)
-        {
-            t = 0f;
-            currentWaypointIndex++;
-            return;
-=======
     public IEnumerator BoostMassAndSpeed(float addedMass, float addedSpeed, float duration)
     {
         float originalSpeed = maxSpeed;
@@ -138,11 +106,48 @@ public class AIController : MonoBehaviour
         targetSpeed = maxSpeed;
         rb.mass = originalMass;
 
+<<<<<<< HEAD
+        Debug.Log(name + " zakoÅ„czyÅ‚ boost.");
+=======
         Debug.Log(name + " zakoñczy³ boost.");
+>>>>>>> bcc21f26ddf4a959f78d15eda879193699c9c941
     }
 
     void MoveAlongWaypoints()
     {
+<<<<<<< HEAD
+        if (waypoints.Length < 4) return;
+
+        if (currentWaypointIndex >= waypoints.Length - 1)
+        {
+            // Ostatni waypoint osiÄ…gniÄ™ty - zatrzymaj pojazd
+            currentSpeed = 0f;
+            targetSpeed = 0f;
+            return;
+        }
+
+        // Indeksy punktÃ³w dla spline
+        int p0Index = Mathf.Clamp(currentWaypointIndex - 1, 0, waypoints.Length - 1);
+        int p1Index = currentWaypointIndex;
+        int p2Index = Mathf.Clamp(currentWaypointIndex + 1, 0, waypoints.Length - 1);
+        int p3Index = Mathf.Clamp(currentWaypointIndex + 2, 0, waypoints.Length - 1);
+
+        Vector3 p0 = waypoints[p0Index].position;
+        Vector3 p1 = waypoints[p1Index].position;
+        Vector3 p2 = waypoints[p2Index].position;
+        Vector3 p3 = waypoints[p3Index].position;
+
+        // Aktualizuj parametr t w zaleÅ¼noÅ›ci od prÄ™dkoÅ›ci i dÅ‚ugoÅ›ci odcinka
+        float segmentLength = Vector3.Distance(p1, p2);
+        t += (currentSpeed * Time.fixedDeltaTime) / segmentLength;
+
+        // Po osiÄ…gniÄ™ciu koÅ„ca segmentu, przejdÅº do kolejnego
+        if (t >= 1f)
+        {
+            t = 0f;
+            currentWaypointIndex++;
+            return;
+=======
         Transform[] currentPath = isOvertaking ? overtakeWaypoints : waypoints;
         int currentIndex = isOvertaking ? currentOvertakeIndex : currentWaypointIndex;
 
@@ -181,7 +186,7 @@ public class AIController : MonoBehaviour
 >>>>>>> bcc21f26ddf4a959f78d15eda879193699c9c941
         }
 
-        // Wyznacz pozycjê na spline
+        // Wyznacz pozycjï¿½ na spline
         Vector3 targetPos = GetCatmullRomPosition(t, p0, p1, p2, p3);
 
         // Obracanie w kierunku celu
@@ -228,10 +233,13 @@ public class AIController : MonoBehaviour
                 return;
 
             Debug.Log(name + " hit: " + hit.collider.name);
+<<<<<<< HEAD
+=======
 
+>>>>>>> bcc21f26ddf4a959f78d15eda879193699c9c941
             if (hit.collider.CompareTag("Player") || hit.collider.name.StartsWith("AI"))
             {
-                Debug.Log(gameObject.name + " wykry³ przeszkodê — rozpoczyna wyprzedzanie!");
+                Debug.Log(gameObject.name + " wykryÅ‚ przeszkodÄ™ i rozpoczyna wyprzedzanie!");
                 StartOvertaking();
             }
         }
@@ -252,7 +260,7 @@ public class AIController : MonoBehaviour
     {
         if (collision.gameObject.CompareTag("Player"))
         {
-            Debug.Log(gameObject.name + " zderzy³ siê z graczem!");
+            Debug.Log(gameObject.name + " zderzyï¿½ siï¿½ z graczem!");
             targetSpeed = maxSpeed * slowdownMultiplier;
             slowdownTimer = collisionSlowdownTime;
 
@@ -260,6 +268,19 @@ public class AIController : MonoBehaviour
             rb.AddForce(pushDir * 300f);
         }
     }
+<<<<<<< HEAD
+
+    public void SetWaypoints(Transform[] newWaypoints, Transform[] newOvertakeWaypoints = null)
+    {
+        waypoints = newWaypoints;
+        overtakeWaypoints = newOvertakeWaypoints ?? new Transform[0];
+        currentWaypointIndex = 0;
+        currentOvertakeIndex = 0;
+        isOvertaking = false;
+
+        Debug.Log(name + " zmieniÅ‚ trasÄ™ na nowe waypointy.");
+    }
+=======
     public void SetWaypoints(Transform[] newWaypoints, Transform[] newOvertakeWaypoints = null)
 {
     waypoints = newWaypoints;
@@ -270,6 +291,7 @@ public class AIController : MonoBehaviour
 
     Debug.Log(name + " zmieni³ trasê na nowe waypointy.");
 }
+>>>>>>> bcc21f26ddf4a959f78d15eda879193699c9c941
     public bool aiActive = true;
     public IEnumerator StopTemporarily(float duration)
     {
@@ -280,5 +302,8 @@ public class AIController : MonoBehaviour
 
         aiActive = originalState;
     }
+<<<<<<< HEAD
+=======
 
+>>>>>>> bcc21f26ddf4a959f78d15eda879193699c9c941
 }

@@ -9,7 +9,7 @@ public class AIController : MonoBehaviour
     public float acceleration = 10f;
     public float deceleration = 20f;
     public float turnSpeed = 5f;
-    // public float rayDistance = 7f;
+   // public float rayDistance = 7f;
     [SerializeField] private float rayDistance = 20f;
     [SerializeField] private LayerMask obstacleLayers;
 
@@ -103,94 +103,80 @@ public class AIController : MonoBehaviour
         rb.mass = originalMass;
 
         Debug.Log(name + " zakończył boost.");
+        Debug.Log(name + " zako�czy� boost.");
     }
 
-    void MoveAlongWaypoints()
-    {
-        if (waypoints.Length < 4) return;
+    // void MoveAlongWaypoints()
+    // {
+    //     Transform[] currentPath = isOvertaking ? overtakeWaypoints : waypoints;
+    //     int currentIndex = isOvertaking ? currentOvertakeIndex : currentWaypointIndex;
 
-        if (currentWaypointIndex >= waypoints.Length - 1)
-        {
-            // Ostatni waypoint osiągnięty - zatrzymaj pojazd
-            currentSpeed = 0f;
-            targetSpeed = 0f;
-            return;
-        }
+    //     if (currentIndex >= currentPath.Length) return;
+    //         // Ostatni waypoint osiągnięty - zatrzymaj pojazd
+    //         currentSpeed = 0f;
+    //         targetSpeed = 0f;
+    //         return;
+    //     }
 
-        // Indeksy punktów dla spline
-        int p0Index = Mathf.Clamp(currentWaypointIndex - 1, 0, waypoints.Length - 1);
-        int p1Index = currentWaypointIndex;
-        int p2Index = Mathf.Clamp(currentWaypointIndex + 1, 0, waypoints.Length - 1);
-        int p3Index = Mathf.Clamp(currentWaypointIndex + 2, 0, waypoints.Length - 1);
+    //     Vector3 targetPos = currentPath[currentIndex].position;
+    //     Vector3 flatTargetDir = targetPos - transform.position;
+    //     flatTargetDir.y = 0;
 
-        Vector3 p0 = waypoints[p0Index].position;
-        Vector3 p1 = waypoints[p1Index].position;
-        Vector3 p2 = waypoints[p2Index].position;
-        Vector3 p3 = waypoints[p3Index].position;
+    //     float angleToTarget = Vector3.Angle(transform.forward, flatTargetDir.normalized);
 
-        // Aktualizuj parametr t w zależności od prędkości i długości odcinka
-        float segmentLength = Vector3.Distance(p1, p2);
-        t += (currentSpeed * Time.fixedDeltaTime) / segmentLength;
+        
+    //     float speedFactor = Mathf.Clamp01(1f - (angleToTarget / 90f)); 
+    //     targetSpeed = Mathf.Lerp(maxSpeed * 0.4f, maxSpeed, speedFactor);
 
-        // Po osiągnięciu końca segmentu, przejdź do kolejnego
-        if (t >= 1f)
-        {
-            t = 0f;
-            currentWaypointIndex++;
-            return;
-        }
+        
+    //     float dynamicTurnSpeed = Mathf.Lerp(turnSpeed * 0.3f, turnSpeed, speedFactor);
 
-        // Wyznacz pozycj� na spline
-        Vector3 targetPos = GetCatmullRomPosition(t, p0, p1, p2, p3);
+    //     Quaternion targetRotation = Quaternion.LookRotation(flatTargetDir);
+    //     transform.rotation = Quaternion.Lerp(transform.rotation, targetRotation, dynamicTurnSpeed * Time.deltaTime);
 
-        // Obracanie w kierunku celu
-        Vector3 targetDir = (targetPos - transform.position).normalized;
-        targetDir.y = 0;
+    //     rb.MovePosition(transform.position + transform.forward * currentSpeed * Time.fixedDeltaTime);
 
-        Vector3 newDir = Vector3.RotateTowards(transform.forward, targetDir, turnSpeed * Time.fixedDeltaTime, 0.0f);
-        transform.rotation = Quaternion.LookRotation(newDir);
+    //     float distance = flatTargetDir.magnitude;
+    //     float dot = Vector3.Dot(transform.forward, flatTargetDir.normalized);
 
-        // Ruch do przodu
-        rb.MovePosition(transform.position + newDir * currentSpeed * Time.fixedDeltaTime);
-    }
+    //     if (distance < 3f || dot < 0f)
+    //     {
+    //         if (isOvertaking)
+    //             currentOvertakeIndex++;
+    //         else
+    //             currentWaypointIndex++;
 
-    // Catmull-Rom Spline helper
-    Vector3 GetCatmullRomPosition(float t, Vector3 p0, Vector3 p1, Vector3 p2, Vector3 p3)
-    {
-        float t2 = t * t;
-        float t3 = t2 * t;
-
-        return 0.5f * (
-            (2f * p1) +
-            (-p0 + p2) * t +
-            (2f * p0 - 5f * p1 + 4f * p2 - p3) * t2 +
-            (-p0 + 3f * p1 - 3f * p2 + p3) * t3
-        );
-    }
+           
+    //         targetSpeed = maxSpeed;
+    //     }
+    // }
 
 
 
-    void DetectObstacles()
-    {
-        RaycastHit hit;
-        Vector3 rayStart = transform.position + Vector3.up * 0.5f;
-        Vector3 rayDir = transform.forward;
+    // void DetectObstacles()
+    // {
+    //     RaycastHit hit;
+    //     Vector3 rayStart = transform.position + Vector3.up * 0.5f;
+    //     Vector3 rayDir = transform.forward;
 
-        Debug.DrawRay(rayStart, rayDir * rayDistance, Color.red);
+    //     Debug.DrawRay(rayStart, rayDir * rayDistance, Color.red);
 
-        if (Physics.Raycast(rayStart, rayDir, out hit, rayDistance, obstacleLayers))
-        {
-            if (hit.collider.gameObject == this.gameObject)
-                return;
+    //     if (Physics.Raycast(rayStart, rayDir, out hit, rayDistance, obstacleLayers))
+    //     {
+    //         if (hit.collider.gameObject == this.gameObject)
+    //             return;
 
-            Debug.Log(name + " hit: " + hit.collider.name);
-            if (hit.collider.CompareTag("Player") || hit.collider.name.StartsWith("AI"))
-            {
-                Debug.Log(gameObject.name + " wykrył przeszkodę i rozpoczyna wyprzedzanie!");
-                StartOvertaking();
-            }
-        }
-    }
+    //         Debug.Log(name + " hit: " + hit.collider.name);
+
+    //         if (hit.collider.CompareTag("Player") || hit.collider.name.StartsWith("AI"))
+    //         {
+    //             Debug.Log(gameObject.name + " wykry� przeszkod� � rozpoczyna wyprzedzanie!");
+    //             StartOvertaking();
+    //         }
+    //     }
+    // }
+
+
 
     void StartOvertaking()
     {
@@ -213,17 +199,16 @@ public class AIController : MonoBehaviour
             rb.AddForce(pushDir * 300f);
         }
     }
-
     public void SetWaypoints(Transform[] newWaypoints, Transform[] newOvertakeWaypoints = null)
-    {
-        waypoints = newWaypoints;
-        overtakeWaypoints = newOvertakeWaypoints ?? new Transform[0];
-        currentWaypointIndex = 0;
-        currentOvertakeIndex = 0;
-        isOvertaking = false;
+{
+    waypoints = newWaypoints;
+    overtakeWaypoints = newOvertakeWaypoints ?? new Transform[0];
+    currentWaypointIndex = 0;
+    currentOvertakeIndex = 0;
+    isOvertaking = false;
 
-        Debug.Log(name + " zmienił trasę na nowe waypointy.");
-    }
+    Debug.Log(name + " zmieni� tras� na nowe waypointy.");
+}
     public bool aiActive = true;
     public IEnumerator StopTemporarily(float duration)
     {
@@ -234,4 +219,5 @@ public class AIController : MonoBehaviour
 
         aiActive = originalState;
     }
+
 }
