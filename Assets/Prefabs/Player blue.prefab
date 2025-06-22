@@ -68,6 +68,16 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 1.934
       objectReference: {fileID: 0}
+    - target: {fileID: 4360486264123951005, guid: 3507a04562c316643b5eaa32755b5ef9,
+        type: 3}
+      propertyPath: trackLayer.m_Bits
+      value: 64
+      objectReference: {fileID: 0}
+    - target: {fileID: 4360486264123951005, guid: 3507a04562c316643b5eaa32755b5ef9,
+        type: 3}
+      propertyPath: trackCheckDistance
+      value: 5
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

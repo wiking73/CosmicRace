@@ -178,8 +178,6 @@ public class CarController : MonoBehaviour
 
     private void Start()
     {
-        originalMotorForce = motorForce;
-
         if (SceneManager.GetActiveScene().name == "VehicleSelectScene")
         {
             Rigidbody rb = GetComponent<Rigidbody>();
@@ -215,10 +213,9 @@ public class CarController : MonoBehaviour
 
     public IEnumerator ActivateBoost(float multiplier, float duration)
     {
-        float originalMotorForce = motorForce;
         motorForce += multiplier;
         yield return new WaitForSeconds(duration);
-        motorForce = originalMotorForce;
+        motorForce = this.originalMotorForce;
     }
     
     private void ResetCarOrientation()
@@ -314,11 +311,9 @@ public class CarController : MonoBehaviour
             return;
         }
 
-        // Przenie� auto
         transform.position = bestPoint.position + Vector3.up * 1f;
         transform.rotation = Quaternion.Euler(0, bestPoint.eulerAngles.y, 0);
 
-        // Resetuj fizyk�
         Rigidbody rb = GetComponent<Rigidbody>();
         if (rb != null)
         {

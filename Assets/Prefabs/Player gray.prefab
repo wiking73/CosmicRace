@@ -759,6 +759,12 @@ MonoBehaviour:
   maxPitch: 1.5
   minVolume: 0.2
   maxVolume: 1
+  trackLayer:
+    serializedVersion: 2
+    m_Bits: 64
+  trackCheckDistance: 5
+  fallbackRespawnPoint: {fileID: 0}
+  respawnDelay: 1.5
   resetHeight: 1
   resetKey: 114
   motorForce: 1000
