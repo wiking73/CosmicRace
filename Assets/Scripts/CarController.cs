@@ -225,11 +225,11 @@ public class CarController : MonoBehaviour
             return;
         }
 
-        // Przenieï¿½ auto
+        
         transform.position = bestPoint.position + Vector3.up * 1f;
         transform.rotation = Quaternion.Euler(0, bestPoint.eulerAngles.y, 0);
 
-        // Resetuj fizykï¿½
+        
         Rigidbody rb = GetComponent<Rigidbody>();
         if (rb != null)
         {
@@ -291,7 +291,57 @@ public class CarController : MonoBehaviour
     }
 
 
+    public IEnumerator FreezeAndTeleport(float duration)
+    {
+        Rigidbody rb = GetComponent<Rigidbody>();
 
+        if (rb != null)
+        {
+            rb.linearVelocity = Vector3.zero;
+            rb.angularVelocity = Vector3.zero;
+            rb.isKinematic = true; 
+        }
 
+        yield return new WaitForSeconds(duration * 0.5f); 
 
+        RespawnToLastValid(); 
+
+        yield return new WaitForSeconds(duration * 0.5f); 
+
+        if (rb != null)
+        {
+            rb.isKinematic = false; 
+        }
+    }
+
+    public IEnumerator FreezeCar(float duration)
+    {
+        Rigidbody rb = GetComponent<Rigidbody>();
+        if (rb != null)
+        {
+            float originalMotor = motorForce;
+
+            rb.linearVelocity = Vector3.zero;
+            rb.angularVelocity = Vector3.zero;
+            rb.isKinematic = true;
+            motorForce = 0f;
+
+            
+            if (FlipCar != null)
+            {
+                FlipCar.text = "Zatrzymano przez przeszkodê!";
+                FlipCar.gameObject.SetActive(true);
+            }
+
+            yield return new WaitForSeconds(duration);
+
+            rb.isKinematic = false;
+            motorForce = originalMotor;
+
+            if (FlipCar != null)
+            {
+                FlipCar.gameObject.SetActive(false);
+            }
+        }
+    }
 }

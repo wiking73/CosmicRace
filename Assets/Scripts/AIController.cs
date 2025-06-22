@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections;
 
 public class AIController : MonoBehaviour
 {
@@ -29,21 +30,21 @@ public class AIController : MonoBehaviour
 
         if (gameObject.name.Contains("Red"))
         {
-            maxSpeed = 25f;
-            acceleration = 12f;
-            deceleration = 25f;
+            maxSpeed = 36f;
+            acceleration = 25f;
+            deceleration = 30f;
         }
         else if (gameObject.name.Contains("Yellow"))
         {
-            maxSpeed = 22f;
-            acceleration = 10f;
-            deceleration = 22f;
+            maxSpeed = 38f;
+            acceleration = 30f;
+            deceleration = 30f;
         }
         else if (gameObject.name.Contains("Violet"))
         {
-            maxSpeed = 20f;
-            acceleration = 9f;
-            deceleration = 20f;
+            maxSpeed = 34f;
+            acceleration = 45f;
+            deceleration = 30f;
         }
 
         targetSpeed = maxSpeed;
@@ -51,7 +52,7 @@ public class AIController : MonoBehaviour
 
     void FixedUpdate()
     {
-        if (!GameManager.Instance.raceStarted)
+        if (!GameManager.Instance.raceStarted || !aiActive)
             return;
 
         if (slowdownTimer > 0)
@@ -84,45 +85,65 @@ public class AIController : MonoBehaviour
         }
     }
 
+    public IEnumerator BoostMassAndSpeed(float addedMass, float addedSpeed, float duration)
+    {
+        float originalSpeed = maxSpeed;
+        float originalMass = rb.mass;
+
+        maxSpeed += addedSpeed;
+        targetSpeed = maxSpeed;
+        rb.mass += addedMass;
+
+        yield return new WaitForSeconds(duration);
+
+        maxSpeed = originalSpeed;
+        targetSpeed = maxSpeed;
+        rb.mass = originalMass;
+
+        Debug.Log(name + " zakoñczy³ boost.");
+    }
+
     void MoveAlongWaypoints()
     {
-        if (isOvertaking)
+        Transform[] currentPath = isOvertaking ? overtakeWaypoints : waypoints;
+        int currentIndex = isOvertaking ? currentOvertakeIndex : currentWaypointIndex;
+
+        if (currentIndex >= currentPath.Length) return;
+
+        Vector3 targetPos = currentPath[currentIndex].position;
+        Vector3 flatTargetDir = targetPos - transform.position;
+        flatTargetDir.y = 0;
+
+        float angleToTarget = Vector3.Angle(transform.forward, flatTargetDir.normalized);
+
+        
+        float speedFactor = Mathf.Clamp01(1f - (angleToTarget / 90f)); 
+        targetSpeed = Mathf.Lerp(maxSpeed * 0.4f, maxSpeed, speedFactor);
+
+        
+        float dynamicTurnSpeed = Mathf.Lerp(turnSpeed * 0.3f, turnSpeed, speedFactor);
+
+        Quaternion targetRotation = Quaternion.LookRotation(flatTargetDir);
+        transform.rotation = Quaternion.Lerp(transform.rotation, targetRotation, dynamicTurnSpeed * Time.deltaTime);
+
+        rb.MovePosition(transform.position + transform.forward * currentSpeed * Time.fixedDeltaTime);
+
+        float distance = flatTargetDir.magnitude;
+        float dot = Vector3.Dot(transform.forward, flatTargetDir.normalized);
+
+        if (distance < 3f || dot < 0f)
         {
-            if (currentOvertakeIndex >= overtakeWaypoints.Length) return;
-
-            Vector3 targetDir = overtakeWaypoints[currentOvertakeIndex].position - transform.position;
-            targetDir.y = 0;
-            Quaternion targetRotation = Quaternion.LookRotation(targetDir);
-            transform.rotation = Quaternion.Lerp(transform.rotation, targetRotation, turnSpeed * Time.deltaTime);
-
-            rb.MovePosition(transform.position + transform.forward * currentSpeed * Time.fixedDeltaTime);
-
-            if (Vector3.Distance(transform.position, overtakeWaypoints[currentOvertakeIndex].position) < 3f)
-            {
+            if (isOvertaking)
                 currentOvertakeIndex++;
-                if (currentOvertakeIndex >= overtakeWaypoints.Length)
-                {
-                    isOvertaking = false;
-                }
-            }
-        }
-        else
-        {
-            if (currentWaypointIndex >= waypoints.Length) return;
-
-            Vector3 targetDir = waypoints[currentWaypointIndex].position - transform.position;
-            targetDir.y = 0;
-            Quaternion targetRotation = Quaternion.LookRotation(targetDir);
-            transform.rotation = Quaternion.Lerp(transform.rotation, targetRotation, turnSpeed * Time.deltaTime);
-
-            rb.MovePosition(transform.position + transform.forward * currentSpeed * Time.fixedDeltaTime);
-
-            if (Vector3.Distance(transform.position, waypoints[currentWaypointIndex].position) < 3f)
-            {
+            else
                 currentWaypointIndex++;
-            }
+
+           
+            targetSpeed = maxSpeed;
         }
     }
+
+
 
     void DetectObstacles()
     {
@@ -180,5 +201,15 @@ public class AIController : MonoBehaviour
 
     Debug.Log(name + " zmieni³ trasê na nowe waypointy.");
 }
+    public bool aiActive = true;
+    public IEnumerator StopTemporarily(float duration)
+    {
+        bool originalState = aiActive; 
+        aiActive = false;
+
+        yield return new WaitForSeconds(duration);
+
+        aiActive = originalState;
+    }
 
 }

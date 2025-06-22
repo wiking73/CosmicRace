@@ -11,7 +11,7 @@ public class RaceManager : MonoBehaviour
     public Text resultText;
     public GameObject resultPanel;
     public UnityEngine.UI.Text countdownText;
-
+    public TimeCounter timeCounter;
 
     private bool raceFinished = false;
     private List<string> finishOrder = new List<string>();
@@ -27,7 +27,7 @@ public class RaceManager : MonoBehaviour
 
         if (raceFinished) return;
 
-        racers.Sort((a, b) => a.position.z.CompareTo(b.position.z)); // sortowanie po pozycji Z (na trasie od-do)
+        racers.Sort((a, b) => a.position.z.CompareTo(b.position.z)); 
 
         int playerPosition = racers.FindIndex(r => r.name.StartsWith("Player")) + 1;
         positionText.text = "Position: " + playerPosition + " / " + racers.Count;
@@ -57,9 +57,23 @@ public class RaceManager : MonoBehaviour
 
         for (int i = 0; i < finishOrder.Count; i++)
         {
-            resultText.text += (i + 1) + ". " + finishOrder[i] + "\n";
-            Debug.Log((i + 1) + ". " + finishOrder[i] + "\n");
-        }
+            string racerName = finishOrder[i];
 
+            
+            if (racerName.StartsWith("Player"))
+            {
+                float finalTime = timeCounter.timeRemaining;
+                int minutes = Mathf.FloorToInt(finalTime / 60f);
+                int seconds = Mathf.FloorToInt(finalTime % 60f);
+                string formattedTime = string.Format("{0:00}:{1:00}", minutes, seconds);
+
+                resultText.text += $"{i + 1}. {racerName} (Time: {formattedTime})\n";
+            }
+            else
+            {
+                resultText.text += $"{i + 1}. {racerName}\n";
+            }
+        }
     }
+
 }
