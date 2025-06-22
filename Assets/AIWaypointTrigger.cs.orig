@@ -2,6 +2,11 @@ using UnityEngine;
 
 public class AIWaypointTrigger : MonoBehaviour
 {
+<<<<<<< HEAD
+    [SerializeField] private Transform[] newWaypoints;
+    [SerializeField] private Transform[] newOvertakeWaypoints;
+
+=======
     public enum TriggerMode
     {
         ToSideRoad,
@@ -18,6 +23,7 @@ public class AIWaypointTrigger : MonoBehaviour
     [SerializeField] private Transform[] returnToMainWaypoints;
     [SerializeField] private Transform[] returnOvertakeWaypoints;
 
+>>>>>>> 37a2af27fa5b0c1eecd53e1500926bc2c7b7600b
     private void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("AI"))
@@ -25,6 +31,9 @@ public class AIWaypointTrigger : MonoBehaviour
             AIController ai = other.GetComponent<AIController>();
             if (ai != null)
             {
+<<<<<<< HEAD
+                ai.SetWaypoints(newWaypoints, newOvertakeWaypoints);
+=======
                 switch (triggerMode)
                 {
                     case TriggerMode.ToSideRoad:
@@ -35,6 +44,7 @@ public class AIWaypointTrigger : MonoBehaviour
                         ai.SetWaypoints(returnToMainWaypoints, returnOvertakeWaypoints);
                         break;
                 }
+>>>>>>> 37a2af27fa5b0c1eecd53e1500926bc2c7b7600b
             }
         }
     }

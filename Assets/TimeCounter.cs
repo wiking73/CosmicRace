@@ -5,7 +5,7 @@ public class TimeCounter : MonoBehaviour
 {
     public float timeRemaining = 0f; 
     public TextMeshProUGUI timeText;
-    public string textt = "Czas gry";
+    public string textt = "Time";
 
     void Update()
     {
@@ -26,7 +26,9 @@ public class TimeCounter : MonoBehaviour
 
     void UpdateTimeDisplay()
     {
-        timeText.text = textt + ": " + Mathf.Ceil(timeRemaining).ToString() + "s";
-
+        int minutes = Mathf.FloorToInt(timeRemaining / 60f);
+        int seconds = Mathf.FloorToInt(timeRemaining % 60f);
+        timeText.text = $"{textt}: {minutes:00}:{seconds:00}";
     }
+
 }
