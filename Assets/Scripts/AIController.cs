@@ -25,6 +25,8 @@ public class AIController : MonoBehaviour
     private float slowdownTimer = 0f;
     public float lookAheadDistance = 5f;
     private float t = 0f;
+    public float maxDistanceFromWaypoint = 12f;
+    public float waypointThresholdDistance = 4f;
 
     void Start()
     {
@@ -32,20 +34,20 @@ public class AIController : MonoBehaviour
 
         if (gameObject.name.Contains("Red"))
         {
-            maxSpeed = 36f;
-            acceleration = 25f;
-            deceleration = 30f;
-        }
-        else if (gameObject.name.Contains("Yellow"))
-        {
             maxSpeed = 38f;
             acceleration = 30f;
             deceleration = 30f;
         }
-        else if (gameObject.name.Contains("Violet"))
+        else if (gameObject.name.Contains("Yellow"))
         {
             maxSpeed = 34f;
-            acceleration = 45f;
+            acceleration = 25f;
+            deceleration = 30f;
+        }
+        else if (gameObject.name.Contains("Violet"))
+        {
+            maxSpeed = 30f;
+            acceleration = 25f;
             deceleration = 30f;
         }
 
@@ -188,7 +190,13 @@ public class AIController : MonoBehaviour
             targetDir.y = 0;
 
             float angleToTarget = Vector3.Angle(transform.forward, targetDir);
-            float speedFactor = Mathf.Clamp01(1f - (angleToTarget / 90f));
+            if (angleToTarget > 90f)
+            {
+                // np. awaryjne zmniejszenie prędkości, by nie próbował gwałtownie skręcać
+                targetSpeed = Mathf.Min(targetSpeed, maxSpeed * 0.5f);
+            }
+            float clampedAngle = Mathf.Clamp(angleToTarget, 0f, 60f);
+            float speedFactor = Mathf.Clamp01(1f - (clampedAngle / 90f));
             targetSpeed = Mathf.Lerp(maxSpeed * 0.4f, maxSpeed, speedFactor);
             float dynamicTurnSpeed = Mathf.Lerp(turnSpeed * 0.3f, turnSpeed, speedFactor);
 
