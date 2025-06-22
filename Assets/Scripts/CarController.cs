@@ -94,12 +94,13 @@ public class CarController : MonoBehaviour
         UpdateSpeedDisplay();
         CheckTrackUnderneath();
 
+
     }
     private void UpdateSpeedDisplay()
     {
         if (speedText != null && carRigidbody != null)
         {
-            float speed = GetComponent<Rigidbody>().linearVelocity.magnitude * 3.6f; 
+            float speed = GetCurrentSpeed();
             speedText.text = Mathf.RoundToInt(speed).ToString() + " km/h";
         }
     }
@@ -264,7 +265,11 @@ public class CarController : MonoBehaviour
     }
     public float GetCurrentSpeed()
     {
-        return GetComponent<Rigidbody>().linearVelocity.magnitude * 3.6f; 
+        if (carRigidbody != null)
+        {
+            return carRigidbody.linearVelocity.magnitude * 3.6f; 
+        }
+        return 0f;
     }
 
     void UpdateEngineSound()
@@ -280,7 +285,7 @@ public class CarController : MonoBehaviour
     
         engineAudioSource.mute = SFXManager.Instance.IsSFXMuted();
 
-        if (GameManager.Instance != null) // Upewnij się, że GameManager istnieje
+        if (GameManager.Instance != null)
         {
             if (!GameManager.Instance.raceStarted && engineAudioSource.isPlaying)
             {
@@ -317,7 +322,7 @@ public class CarController : MonoBehaviour
 
         if (bestPoint == null)
         {
-            Debug.LogWarning("Brak dost�pnego punktu respawnu!");
+            Debug.LogWarning("Brak dostepnego punktu respawnu!");
             return;
         }
 
@@ -385,4 +390,57 @@ public class CarController : MonoBehaviour
     }
 
 
+    public IEnumerator FreezeAndTeleport(float duration)
+    {
+        Rigidbody rb = GetComponent<Rigidbody>();
+
+        if (rb != null)
+        {
+            rb.linearVelocity = Vector3.zero;
+            rb.angularVelocity = Vector3.zero;
+            rb.isKinematic = true; 
+        }
+
+        yield return new WaitForSeconds(duration * 0.5f); 
+
+        RespawnToLastValid(); 
+
+        yield return new WaitForSeconds(duration * 0.5f); 
+
+        if (rb != null)
+        {
+            rb.isKinematic = false; 
+        }
+    }
+
+    public IEnumerator FreezeCar(float duration)
+    {
+        Rigidbody rb = GetComponent<Rigidbody>();
+        if (rb != null)
+        {
+            float originalMotor = motorForce;
+
+            rb.linearVelocity = Vector3.zero;
+            rb.angularVelocity = Vector3.zero;
+            rb.isKinematic = true;
+            motorForce = 0f;
+
+
+            if (UIManager.Instance != null)
+            {
+                UIManager.Instance.ShowTemporaryMessage("Zatrzymano przez przeszkode!", true);
+            }
+
+
+            yield return new WaitForSeconds(duration);
+
+            rb.isKinematic = false;
+            motorForce = originalMotor;
+
+            if (UIManager.Instance != null)
+            {
+                UIManager.Instance.ShowTemporaryMessage("", false);
+            }
+        }
+    }
 }

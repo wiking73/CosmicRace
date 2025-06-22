@@ -1,6 +1,7 @@
 using UnityEngine;
 using TMPro;
 using UnityEngine.SceneManagement;
+using System.Collections.Generic;
 
 public class GameManager : MonoBehaviour
 {
@@ -54,10 +55,20 @@ public class GameManager : MonoBehaviour
         {
             playerCarInstance = Instantiate(
                 VehicleSelectManager.SelectedCarPrefab,
-                spawnPosition, 
+                spawnPosition,
                 spawnRotation);
 
             playerCarInstance.name = "PlayerCar"; 
+            Position positionScript = FindObjectOfType<Position>();
+            if (positionScript != null)
+            {
+                if (positionScript.allCars == null) 
+                {
+                    positionScript.allCars = new List<Transform>();
+                }
+                positionScript.allCars.Add(playerCarInstance.transform); 
+            }
+            
         }
         else
         {
