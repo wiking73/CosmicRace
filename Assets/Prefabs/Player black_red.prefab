@@ -11,7 +11,7 @@ PrefabInstance:
     - target: {fileID: 443338240413304925, guid: 35e8420ec94c22641923292ee16be9f1,
         type: 3}
       propertyPath: m_Name
-      value: Player white
+      value: Player black_red
       objectReference: {fileID: 0}
     - target: {fileID: 967391472777089767, guid: 35e8420ec94c22641923292ee16be9f1,
         type: 3}
@@ -62,6 +62,16 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 1.934
+      objectReference: {fileID: 0}
+    - target: {fileID: 1968580882261069181, guid: 35e8420ec94c22641923292ee16be9f1,
+        type: 3}
+      propertyPath: trackLayer.m_Bits
+      value: 64
+      objectReference: {fileID: 0}
+    - target: {fileID: 1968580882261069181, guid: 35e8420ec94c22641923292ee16be9f1,
+        type: 3}
+      propertyPath: trackCheckDistance
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 2975368017356276266, guid: 35e8420ec94c22641923292ee16be9f1,
         type: 3}

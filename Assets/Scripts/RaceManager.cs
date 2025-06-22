@@ -6,20 +6,54 @@ public class RaceManager : MonoBehaviour
 {
     public static RaceManager Instance;
 
-    public List<Transform> racers = new List<Transform>();
+    public List<Transform> activeRacers = new List<Transform>();
     public Text positionText;
     public Text resultText;
     public GameObject resultPanel;
     public UnityEngine.UI.Text countdownText;
     public TimeCounter timeCounter;
-
     private bool raceFinished = false;
     private List<string> finishOrder = new List<string>();
 
     private void Awake()
     {
-        Instance = this;
+        // Singleton
+        if (Instance == null)
+        {
+            Instance = this;
+        }
+        else
+        {
+            Destroy(gameObject);
+            return;
+        }
     }
+
+    void Start()
+    {
+        GameObject[] playerCars = GameObject.FindGameObjectsWithTag("Player");
+        GameObject[] aiCars = GameObject.FindGameObjectsWithTag("AI");
+        
+        activeRacers.Clear(); 
+
+        foreach (GameObject go in playerCars)
+        {
+            if (go != null) activeRacers.Add(go.transform);
+        }
+        foreach (GameObject go in aiCars)
+        {
+            if (go != null) activeRacers.Add(go.transform);
+        }
+
+        if (GameManager.Instance != null && GameManager.Instance.playerCarInstance != null)
+        {
+            if (!activeRacers.Contains(GameManager.Instance.playerCarInstance.transform))
+            {
+                activeRacers.Add(GameManager.Instance.playerCarInstance.transform);
+            }
+        }
+    }
+
 
 
     void Update()
@@ -27,14 +61,33 @@ public class RaceManager : MonoBehaviour
 
         if (raceFinished) return;
 
-        racers.Sort((a, b) => a.position.z.CompareTo(b.position.z)); 
+        activeRacers.RemoveAll(racer => racer == null);
 
-        int playerPosition = racers.FindIndex(r => r.name.StartsWith("Player")) + 1;
-        positionText.text = "Position: " + playerPosition + " / " + racers.Count;
+        activeRacers.Sort((a, b) => a.position.z.CompareTo(b.position.z));
+
+        int playerPosition = -1;
+        if (GameManager.Instance != null && GameManager.Instance.playerCarInstance != null)
+        {
+            playerPosition = activeRacers.FindIndex(r => r == GameManager.Instance.playerCarInstance.transform) + 1;
+        }
+
+        if (positionText != null)
+        {
+            if (playerPosition != -1)
+            {
+                positionText.text = "Position: " + playerPosition + " / " + activeRacers.Count;
+            }
+            else
+            {
+                positionText.text = "Position: N/A";
+            }
+        }
     }
 
     public void FinishRace(GameObject racer)
     {
+        if (racer == null) return; 
+
         if (!finishOrder.Contains(racer.name))
         {
             finishOrder.Add(racer.name);
@@ -42,36 +95,43 @@ public class RaceManager : MonoBehaviour
 
         Debug.Log(racer.name);
 
-        if (racer.name.StartsWith("Player"))
+        if (racer.name.StartsWith("Player") || (GameManager.Instance != null && GameManager.Instance.playerCarInstance == racer))
         {
             Debug.Log("Gracz ukonczyl wyscig");
             raceFinished = true;
             ShowResults();
+        
         }
     }
 
     void ShowResults()
     {
-        resultPanel.SetActive(true);
-        resultText.text = "Results:\n";
-
-        for (int i = 0; i < finishOrder.Count; i++)
+        if (resultPanel != null)
         {
-            string racerName = finishOrder[i];
+            resultPanel.SetActive(true);
+        }
+        if (resultText != null)
+        {
+            resultText.text = "Results:\n";
 
-            
-            if (racerName.StartsWith("Player"))
+            for (int i = 0; i < finishOrder.Count; i++)
             {
-                float finalTime = timeCounter.timeRemaining;
-                int minutes = Mathf.FloorToInt(finalTime / 60f);
-                int seconds = Mathf.FloorToInt(finalTime % 60f);
-                string formattedTime = string.Format("{0:00}:{1:00}", minutes, seconds);
+                string racerName = finishOrder[i];
 
-                resultText.text += $"{i + 1}. {racerName} (Time: {formattedTime})\n";
-            }
-            else
-            {
-                resultText.text += $"{i + 1}. {racerName}\n";
+
+                if (racerName.StartsWith("Player"))
+                {
+                    float finalTime = timeCounter.timeRemaining;
+                    int minutes = Mathf.FloorToInt(finalTime / 60f);
+                    int seconds = Mathf.FloorToInt(finalTime % 60f);
+                    string formattedTime = string.Format("{0:00}:{1:00}", minutes, seconds);
+
+                    resultText.text += $"{i + 1}. {racerName} (Time: {formattedTime})\n";
+                }
+                else
+                {
+                    resultText.text += $"{i + 1}. {racerName}\n";
+                }
             }
         }
     }

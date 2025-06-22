@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class VehicleSelectManager : MonoBehaviour
 {
@@ -9,18 +10,21 @@ public class VehicleSelectManager : MonoBehaviour
     public vehicleList listOfVehicles;
     public int vehiclePointer = 0;
 
+    public static GameObject SelectedCarPrefab; 
+
     private void Awake()
     {
-        PlayerPrefs.SetInt("VehiclePointer", 0);
-        vehiclePointer = PlayerPrefs.GetInt("VehiclePointer");
+        vehiclePointer = PlayerPrefs.GetInt("VehiclePointer", 0);
 
-        GameObject childObjeect = Instantiate(listOfVehicles.vehicles[vehiclePointer], Vector3.zero, Quaternion.identity) as GameObject;
-        childObjeect.transform.parent = toRotate.transform;
+        SelectedCarPrefab = listOfVehicles.vehicles[vehiclePointer]; 
 
-        childObjeect.transform.localPosition = new Vector3(0f, 0f, 0f);
-        childObjeect.transform.localRotation = Quaternion.identity;
+        GameObject childObject = Instantiate(listOfVehicles.vehicles[vehiclePointer], Vector3.zero, Quaternion.identity) as GameObject;
+        childObject.transform.parent = toRotate.transform;
 
-        childObjeect.transform.localRotation = Quaternion.Euler(0f, 220f, 0f);
+        childObject.transform.localPosition = new Vector3(0f, 0f, 0f);
+        childObject.transform.localRotation = Quaternion.identity;
+
+        childObject.transform.localRotation = Quaternion.Euler(0f, 220f, 0f);
 
     }
 
@@ -36,13 +40,16 @@ public class VehicleSelectManager : MonoBehaviour
             Destroy(GameObject.FindGameObjectWithTag("Player"));
             vehiclePointer++;
             PlayerPrefs.SetInt("VehiclePointer", vehiclePointer);
-            GameObject childObjeect = Instantiate(listOfVehicles.vehicles[vehiclePointer], Vector3.zero, Quaternion.identity) as GameObject;
-            childObjeect.transform.parent = toRotate.transform;
 
-            childObjeect.transform.localPosition = new Vector3(0f, 0f, 0f);
-            childObjeect.transform.localRotation = Quaternion.identity;
+            SelectedCarPrefab = listOfVehicles.vehicles[vehiclePointer]; 
 
-            childObjeect.transform.localRotation = Quaternion.Euler(0f, 220f, 0f);
+            GameObject childObject = Instantiate(listOfVehicles.vehicles[vehiclePointer], Vector3.zero, Quaternion.identity) as GameObject;
+            childObject.transform.parent = toRotate.transform;
+
+            childObject.transform.localPosition = new Vector3(0f, 0f, 0f);
+            childObject.transform.localRotation = Quaternion.identity;
+
+            childObject.transform.localRotation = Quaternion.Euler(0f, 220f, 0f);
         }
     }
 
@@ -53,14 +60,22 @@ public class VehicleSelectManager : MonoBehaviour
             Destroy(GameObject.FindGameObjectWithTag("Player"));
             vehiclePointer--;
             PlayerPrefs.SetInt("VehiclePointer", vehiclePointer);
-            GameObject childObjeect = Instantiate(listOfVehicles.vehicles[vehiclePointer], Vector3.zero, Quaternion.identity) as GameObject;
-            childObjeect.transform.parent = toRotate.transform;
 
-            childObjeect.transform.localPosition = new Vector3(0f, 0f, 0f);
-            childObjeect.transform.localRotation = Quaternion.identity;
+            SelectedCarPrefab = listOfVehicles.vehicles[vehiclePointer]; 
 
-            childObjeect.transform.localRotation = Quaternion.Euler(0f, 220f, 0f);
+            GameObject childObject = Instantiate(listOfVehicles.vehicles[vehiclePointer], Vector3.zero, Quaternion.identity) as GameObject;
+            childObject.transform.parent = toRotate.transform;
+
+            childObject.transform.localPosition = new Vector3(0f, 0f, 0f);
+            childObject.transform.localRotation = Quaternion.identity;
+
+            childObject.transform.localRotation = Quaternion.Euler(0f, 220f, 0f);
         }
     }
-    
+
+    public void startGameButton()
+    {
+        SelectedCarPrefab = listOfVehicles.vehicles[PlayerPrefs.GetInt("VehiclePointer", 0)];
+        SceneManager.LoadScene("SampleScene");
+    }
 }
