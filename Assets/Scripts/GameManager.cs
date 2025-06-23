@@ -17,7 +17,7 @@ public class GameManager : MonoBehaviour
     public GameObject playerCarInstance;
     
     public Vector3 defaultSpawnPosition = new Vector3(4669.7f, 11.3f, 2133.91f);
-    public Vector3 defaultSpawnRotationEuler = new Vector3(4.852f, -840.477f, 1.934f);
+    public Vector3 defaultSpawnRotationEuler = new Vector3(0f, -840.477f, 0f);
 
 
     private void Awake()
@@ -40,16 +40,19 @@ public class GameManager : MonoBehaviour
         if (existingPlayer != null)
         {
             spawnPosition = existingPlayer.transform.position;
-            spawnRotation = existingPlayer.transform.rotation;
+            Vector3 existingEuler = existingPlayer.transform.rotation.eulerAngles;
+            spawnRotation = Quaternion.Euler(0f, existingEuler.y, 0f);
+    
             Destroy(existingPlayer); 
-            Debug.Log("GameManager: Existing 'Player' object found and removed. Spawning new car at its position.");
         }
         else
         {
             spawnPosition = defaultSpawnPosition;
-            spawnRotation = Quaternion.Euler(defaultSpawnRotationEuler); 
+            spawnRotation = Quaternion.Euler(0f, defaultSpawnRotationEuler.y, 0f);
             Debug.LogWarning("GameManager: No 'Player' object with tag 'Player' found. Spawning at default position from GameManager inspector.");
         }
+
+        Debug.Log("GameManager: Spawning player car at position: " + spawnPosition + " with rotation: " + spawnRotation.eulerAngles);
 
         if (VehicleSelectManager.SelectedCarPrefab != null)
         {
@@ -58,17 +61,17 @@ public class GameManager : MonoBehaviour
                 spawnPosition,
                 spawnRotation);
 
-            playerCarInstance.name = "PlayerCar"; 
+            playerCarInstance.name = "PlayerCar";
             Position positionScript = FindObjectOfType<Position>();
             if (positionScript != null)
             {
-                if (positionScript.allCars == null) 
+                if (positionScript.allCars == null)
                 {
                     positionScript.allCars = new List<Transform>();
                 }
-                positionScript.allCars.Add(playerCarInstance.transform); 
+                positionScript.allCars.Add(playerCarInstance.transform);
             }
-            
+
         }
         else
         {
