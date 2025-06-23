@@ -1,5 +1,4 @@
 using System;
-using System.Security.Cryptography;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -8,6 +7,7 @@ public class MenuManager : MonoBehaviour
     public GameObject mainMenuPanel;
     public GameObject trackSelectPanel;
     public GameObject optionsPanel;
+    public static string SelectedTrackSceneName = ""; 
 
     public void Play()
     {
@@ -34,8 +34,9 @@ public class MenuManager : MonoBehaviour
         mainMenuPanel.SetActive(true);
     }
 
-    public void  LoadScene(int num)
+    public void SelectTrackAndLoadVehicleSelectScene(string sceneNameOfTrack)
     {
-        SceneManager.LoadScene(num);
+        SelectedTrackSceneName = sceneNameOfTrack;
+        SceneManager.LoadScene("VehicleSelectScene");
     }
 }

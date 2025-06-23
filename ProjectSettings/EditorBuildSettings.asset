@@ -9,6 +9,12 @@ EditorBuildSettings:
     path: Assets/Scenes/mainMenu.unity
     guid: 607838543c1641141ab58ec1d083c49b
   - enabled: 1
+    path: Assets/Scenes/VehicleSelectScene.unity
+    guid: 8e5b1b696a2bde34ab370bd660a7a6d4
+  - enabled: 1
+    path: Assets/Scenes/SampleScene.unity
+    guid: 99c9720ab356a0642a771bea13969a05
+  - enabled: 1
     path: Assets/Scenes/Mercury.unity
     guid: f30192993c77ed646a61e6a295118e78
   - enabled: 1
@@ -17,9 +23,6 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Earth.unity
     guid: badc113361a896d4582d9b358ab28699
-  - enabled: 1
-    path: Assets/Scenes/SampleScene.unity
-    guid: 99c9720ab356a0642a771bea13969a05
   - enabled: 1
     path: Assets/Scenes/Mars.unity
     guid: dc52f88321f946a4086273a60dd7e082

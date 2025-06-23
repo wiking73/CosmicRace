@@ -18,6 +18,11 @@ public class VehicleSelectManager : MonoBehaviour
 
         SelectedCarPrefab = listOfVehicles.vehicles[vehiclePointer]; 
 
+        if (toRotate != null && toRotate.transform.childCount > 0)
+        {
+            Destroy(toRotate.transform.GetChild(0).gameObject);
+        }
+
         GameObject childObject = Instantiate(listOfVehicles.vehicles[vehiclePointer], Vector3.zero, Quaternion.identity) as GameObject;
         childObject.transform.parent = toRotate.transform;
 
@@ -76,6 +81,16 @@ public class VehicleSelectManager : MonoBehaviour
     public void startGameButton()
     {
         SelectedCarPrefab = listOfVehicles.vehicles[PlayerPrefs.GetInt("VehiclePointer", 0)];
-        SceneManager.LoadScene("SampleScene");
+        string trackSceneToLoad = MenuManager.SelectedTrackSceneName;
+
+        if (!string.IsNullOrEmpty(trackSceneToLoad))
+        {
+            SceneManager.LoadScene(trackSceneToLoad);
+        }
+        else
+        {
+            Debug.LogError("VehicleSelectManager: No track scene was selected in MenuManager! Loading SampleScene as fallback.");
+            SceneManager.LoadScene("SampleScene");
+        }
     }
 }
