@@ -18,11 +18,6 @@ public class VehicleSelectManager : MonoBehaviour
 
         SelectedCarPrefab = listOfVehicles.vehicles[vehiclePointer]; 
 
-        if (toRotate != null && toRotate.transform.childCount > 0)
-        {
-            Destroy(toRotate.transform.GetChild(0).gameObject);
-        }
-
         GameObject childObject = Instantiate(listOfVehicles.vehicles[vehiclePointer], Vector3.zero, Quaternion.identity) as GameObject;
         childObject.transform.parent = toRotate.transform;
 
