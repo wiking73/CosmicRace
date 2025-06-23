@@ -24,7 +24,7 @@ public class VehicleSelectManager : MonoBehaviour
         childObject.transform.localPosition = new Vector3(0f, 0f, 0f);
         childObject.transform.localRotation = Quaternion.identity;
 
-        childObject.transform.localRotation = Quaternion.Euler(0f, 220f, 0f);
+        // childObject.transform.localRotation = Quaternion.Euler(0f, 220f, 0f);
 
     }
 

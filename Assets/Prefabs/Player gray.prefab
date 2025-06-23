@@ -752,7 +752,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 322437e23b6dead489699cbb47274156, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  FlipCar: {fileID: 0}
   speedText: {fileID: 0}
   engineSoundClip: {fileID: 8300000, guid: 1cc97137787ed764d9acd73315d8f15a, type: 3}
   minPitch: 0.8
