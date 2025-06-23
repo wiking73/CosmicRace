@@ -52,8 +52,6 @@ public class GameManager : MonoBehaviour
             Debug.LogWarning("GameManager: No 'Player' object with tag 'Player' found. Spawning at default position from GameManager inspector.");
         }
 
-        Debug.Log("GameManager: Spawning player car at position: " + spawnPosition + " with rotation: " + spawnRotation.eulerAngles);
-
         if (VehicleSelectManager.SelectedCarPrefab != null)
         {
             playerCarInstance = Instantiate(
