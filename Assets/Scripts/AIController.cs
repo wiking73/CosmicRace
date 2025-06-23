@@ -28,6 +28,24 @@ public class AIController : MonoBehaviour
     public float maxDistanceFromWaypoint = 12f;
     public float waypointThresholdDistance = 4f;
 
+    public void TeleportToWaypoint(int waypointIndex)
+    {
+        if (waypointIndex < 0 || waypointIndex >= waypoints.Length)
+        {
+            Debug.LogWarning("Waypoint index out of range!");
+            return;
+        }
+
+        currentWaypointIndex = waypointIndex;
+        t = 0f;
+        transform.position = waypoints[waypointIndex].position;
+        transform.rotation = waypoints[waypointIndex].rotation;
+        rb.linearVelocity = Vector3.zero;
+        rb.angularVelocity = Vector3.zero;
+
+        Debug.Log(name + " został przesunięty na waypoint nr " + waypointIndex);
+    }
+
     void Start()
     {
         rb = GetComponent<Rigidbody>();
@@ -37,6 +55,7 @@ public class AIController : MonoBehaviour
             maxSpeed = 38f;
             acceleration = 30f;
             deceleration = 30f;
+
         }
         else if (gameObject.name.Contains("Yellow"))
         {
@@ -190,10 +209,13 @@ public class AIController : MonoBehaviour
             targetDir.y = 0;
 
             float angleToTarget = Vector3.Angle(transform.forward, targetDir);
-            if (angleToTarget > 90f)
+            if (angleToTarget > 60f)
             {
-                // np. awaryjne zmniejszenie prędkości, by nie próbował gwałtownie skręcać
-                targetSpeed = Mathf.Min(targetSpeed, maxSpeed * 0.5f);
+                targetSpeed = maxSpeed * 0.3f;  // bardzo ostry zakręt — mocno zwalniamy
+            }
+            else if (angleToTarget > 45f)
+            {
+                targetSpeed = maxSpeed * 0.5f;  // średnio ostry zakręt
             }
             float clampedAngle = Mathf.Clamp(angleToTarget, 0f, 60f);
             float speedFactor = Mathf.Clamp01(1f - (clampedAngle / 90f));
