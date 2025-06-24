@@ -29,7 +29,6 @@ public class CarController : MonoBehaviour
     [SerializeField] private float trackCheckDistance = 0.1f;
     [SerializeField] private Transform fallbackRespawnPoint;
     private Vector3 lastValidPosition;
-    //[SerializeField] private Transform[] respawnPoints;
     private List<Transform> currentRespawnPoints = new List<Transform>();
     public void SetRespawnPoints(Transform[] newPoints)
     {
@@ -93,7 +92,6 @@ public class CarController : MonoBehaviour
 
         UpdateSpeedDisplay();
         CheckTrackUnderneath();
-
 
     }
     private void UpdateSpeedDisplay()

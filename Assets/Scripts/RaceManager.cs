@@ -82,6 +82,7 @@ public class RaceManager : MonoBehaviour
                 positionText.text = "Position: N/A";
             }
         }
+        positionText.text = "";
     }
 
     public void FinishRace(GameObject racer)
