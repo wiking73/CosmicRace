@@ -67,32 +67,46 @@ public class MiniMapController : MonoBehaviour {
 	Image miniMapPanelImage;
 
 	//Initialize everything here
-	public void OnEnable(){
-		ownerIconMap.Clear ();
-		GameObject maskPanelGO = transform.GetComponentInChildren<Mask> ().gameObject;
-		mapPanelMask = maskPanelGO.GetComponent<Image> ();
-		mapPanelBorder = maskPanelGO.transform.parent.GetComponent<Image> ();
-		miniMapPanel = maskPanelGO.transform.GetChild (0).gameObject;
-		mapPanel = miniMapPanel.GetComponent<Image> ();
+	public void OnEnable()
+	{
+		ownerIconMap.Clear();
+		GameObject maskPanelGO = transform.GetComponentInChildren<Mask>().gameObject;
+		mapPanelMask = maskPanelGO.GetComponent<Image>();
+		mapPanelBorder = maskPanelGO.transform.parent.GetComponent<Image>();
+		miniMapPanel = maskPanelGO.transform.GetChild(0).gameObject;
+		mapPanel = miniMapPanel.GetComponent<Image>();
 		mapColor = mapPanel.color;
 		mapBorderColor = mapPanelBorder.color;
 		//mapPanelImage = transform.GetComponent<Image> ();
-		if(mapCamera==null) mapCamera = transform.GetComponentInChildren<Camera>();
+		if (mapCamera == null) mapCamera = transform.GetComponentInChildren<Camera>();
 		mapCamera.cullingMask = minimapLayers;
 
-		mapPanelMaskRect = maskPanelGO.GetComponent<RectTransform> ();
-		mapPanelRect = miniMapPanel.GetComponent<RectTransform> ();
+		mapPanelMaskRect = maskPanelGO.GetComponent<RectTransform>();
+		mapPanelRect = miniMapPanel.GetComponent<RectTransform>();
 		mapPanelRect.anchoredPosition = mapPanelMaskRect.anchoredPosition;
-		res = new Vector2(Screen.width,Screen.height);
+		res = new Vector2(Screen.width, Screen.height);
 
-		miniMapPanelImage = miniMapPanel.GetComponent<Image> ();
+		miniMapPanelImage = miniMapPanel.GetComponent<Image>();
 		miniMapPanelImage.enabled = !showBackground;
 		SetupRenderTexture();
+		
+
+        if (GameManager.Instance != null && GameManager.Instance.playerCarInstance != null)
+        {
+            target = GameManager.Instance.playerCarInstance.transform;
+            Debug.Log("MiniMapController: Target set to PlayerCar.");
+        }
+        else
+        {
+            Debug.LogWarning("MiniMapController: Could not find GameManager instance or playerCarInstance. Minimap might not follow anything.", this);
+            GameObject playerGO = GameObject.FindWithTag("Player");
+            if (playerGO != null) { target = playerGO.transform; }
+        }
 	}
 	//Release the unmanaged objects
 	void OnDisable(){
 		if (renderTex != null) {
-			if (!renderTex.IsCreated ()) {
+			if (renderTex.IsCreated ()) {
 				renderTex.Release ();
 			}
 		}
@@ -102,7 +116,7 @@ public class MiniMapController : MonoBehaviour {
 	void OnDestroy(){
 		//Debug.Log ("MiniMapController OnDestroy");
 		if (renderTex != null) {
-			if (!renderTex.IsCreated ()) {
+			if (renderTex.IsCreated ()) {
 				renderTex.Release ();
 			}
 		}
@@ -138,7 +152,7 @@ public class MiniMapController : MonoBehaviour {
 	void SetupRenderTexture(){
 		//Release the old texture, otherwise memory leak happens
 		//This line shows as error log in Unity versions < 5.4, which is a Unity bug. But harmless.
-		if(renderTex.IsCreated()) renderTex.Release ();
+		if(renderTex != null && renderTex.IsCreated()) renderTex.Release ();
 		//Setup render texture and resize it.
 		//New render texture was created, as premade render texture's size can't be changed
 		renderTex = new RenderTexture ((int)mapPanelRect.sizeDelta.x, (int)mapPanelRect.sizeDelta.y, 24);
@@ -185,6 +199,9 @@ public class MiniMapController : MonoBehaviour {
 			Destroy (ownerIconMap [owner]);
 			ownerIconMap.Remove (owner);
 		}
-		Destroy (mmo);
+		if (mmo != null)
+		{
+			Destroy(mmo);
+		}
 	}
 }

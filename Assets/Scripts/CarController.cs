@@ -2,17 +2,47 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using TMPro;
 
 
 public class CarController : MonoBehaviour
 {
+    [Header("General")]
     private float horizontalInput, verticalInput;
     private float currentSteerAngle, currentbreakForce;
     private bool isBreaking;
     private float originalMotorForce;
-    public TextMeshProUGUI FlipCar;
     public TextMeshProUGUI speedText;
+
+    [Header("Engine Sound")]
+    public AudioClip engineSoundClip;
+    public float minPitch = 0.8f;
+    public float maxPitch = 1.5f;
+    public float minVolume = 0.2f;
+    public float maxVolume = 1.0f;
+
+    private AudioSource engineAudioSource; 
+    private Rigidbody carRigidbody;
+
+    [SerializeField] private LayerMask trackLayer;
+    [SerializeField] private float trackCheckDistance = 0.1f;
+    [SerializeField] private Transform fallbackRespawnPoint;
+    private Vector3 lastValidPosition;
+    private List<Transform> currentRespawnPoints = new List<Transform>();
+    public void SetRespawnPoints(Transform[] newPoints)
+    {
+        currentRespawnPoints = new List<Transform>(newPoints);
+    }
+
+
+
+
+    private bool isOffTrack = false;
+    private float offTrackTimer = 0f;
+    [SerializeField] private float respawnDelay = 1.5f;
+
+
 
 
     [SerializeField] private float resetHeight = 1.0f;
@@ -31,16 +61,23 @@ public class CarController : MonoBehaviour
 
     private void FixedUpdate()
     {
+        if (SceneManager.GetActiveScene().name == "VehicleSelectScene")
+            return;
+
         if (!GameManager.Instance.raceStarted)
             return;
         GetInput();
         HandleMotor();
         HandleSteering();
         UpdateWheels();
+        UpdateEngineSound();
     }
     private bool IsCarFlipped()
     {
-        return Vector3.Dot(transform.up, Vector3.down) > 0.5f;
+        float angle = Vector3.Angle(transform.up, Vector3.up);
+        float flipThresholdAngle = 60f;
+
+        return angle > flipThresholdAngle;
     }
     private void Update()
     {
@@ -48,17 +85,20 @@ public class CarController : MonoBehaviour
         {
             ResetCarOrientation();
         }
-        if (FlipCar != null)
+        if (UIManager.Instance != null) 
         {
-            FlipCar.gameObject.SetActive(IsCarFlipped());
+            UIManager.Instance.ShowFlipCarPrompt(IsCarFlipped()); 
         }
+
         UpdateSpeedDisplay();
+        CheckTrackUnderneath();
+
     }
     private void UpdateSpeedDisplay()
     {
-        if (speedText != null)
+        if (speedText != null && carRigidbody != null)
         {
-            float speed = GetComponent<Rigidbody>().linearVelocity.magnitude * 3.6f; 
+            float speed = GetCurrentSpeed();
             speedText.text = Mathf.RoundToInt(speed).ToString() + " km/h";
         }
     }
@@ -117,30 +157,89 @@ public class CarController : MonoBehaviour
         wheelTransform.position = pos;
     }
 
+    private void Awake()
+    {
+        carRigidbody = GetComponent<Rigidbody>();
+
+        engineAudioSource = gameObject.AddComponent<AudioSource>();
+        engineAudioSource.clip = engineSoundClip;
+        engineAudioSource.loop = true;
+        engineAudioSource.playOnAwake = false;
+        engineAudioSource.spatialBlend = 1.0f;
+        engineAudioSource.volume = minVolume;
+        engineAudioSource.pitch = minPitch;
+
+
+        engineAudioSource.rolloffMode = AudioRolloffMode.Logarithmic;
+        engineAudioSource.minDistance = 5f;
+        engineAudioSource.maxDistance = 200f;
+
+        originalMotorForce = motorForce;
+    }
+
     private void Start()
     {
-        originalMotorForce = motorForce; 
+        if (SceneManager.GetActiveScene().name == "VehicleSelectScene")
+        {
+            Rigidbody rb = GetComponent<Rigidbody>();
+            if (rb != null)
+            {
+                rb.useGravity = false;
+                rb.isKinematic = true;
+            }
+        }
+
+        if (engineSoundClip != null)
+        {
+            engineAudioSource.Play();
+        }
+
+        if (SFXManager.Instance != null)
+        {
+            SFXManager.Instance.RegisterEngineAudioSource(engineAudioSource);
+        }
+        else
+        {
+            Debug.LogError("CarController: SFXManager.Instance is null. Cannot register engine audio source.", this);
+        }   
     }
-    public IEnumerator ActivateBoost(float multiplier, float duration) 
+
+    private void OnDestroy()
     {
-        float originalMotorForce = motorForce;
-        motorForce += multiplier; 
-        yield return new WaitForSeconds(duration);
-        motorForce = originalMotorForce;
+        if (SFXManager.Instance != null && engineAudioSource != null)
+        {
+            SFXManager.Instance.UnregisterEngineAudioSource(engineAudioSource);
+        }
+        if (UIManager.Instance != null)
+        {
+            UIManager.Instance.ShowFlipCarPrompt(false);
+        }
     }
+
+    public IEnumerator ActivateBoost(float multiplier, float duration)
+    {
+        motorForce += multiplier;
+        yield return new WaitForSeconds(duration);
+        motorForce = this.originalMotorForce;
+    }
+    
     private void ResetCarOrientation()
     {
-        
-        transform.position += Vector3.up * resetHeight;    
+
+        transform.position += Vector3.up * resetHeight;
         Vector3 uprightRotation = new Vector3(0, transform.eulerAngles.y, 0);
         transform.eulerAngles = uprightRotation;
 
-        
+
         Rigidbody rb = GetComponent<Rigidbody>();
         if (rb != null)
         {
             rb.linearVelocity = Vector3.zero;
             rb.angularVelocity = Vector3.zero;
+        }
+        if (UIManager.Instance != null)
+        {
+            UIManager.Instance.ShowFlipCarPrompt(false);
         }
     }
     public IEnumerator BoostMassAndSpeed(float massReduction, float motorBoost, float duration)
@@ -164,10 +263,182 @@ public class CarController : MonoBehaviour
     }
     public float GetCurrentSpeed()
     {
-        return GetComponent<Rigidbody>().linearVelocity.magnitude * 3.6f; 
+        if (carRigidbody != null)
+        {
+            return carRigidbody.linearVelocity.magnitude * 3.6f; 
+        }
+        return 0f;
+    }
+
+    void UpdateEngineSound()
+    {
+        if (engineAudioSource == null || carRigidbody == null || SFXManager.Instance == null) return;
+
+        float currentSpeed = carRigidbody.linearVelocity.magnitude;
+
+        float speedNormalized = Mathf.InverseLerp(0f, 30f, currentSpeed);
+
+        engineAudioSource.pitch = Mathf.Lerp(minPitch, maxPitch, speedNormalized);
+        engineAudioSource.volume = Mathf.Lerp(minVolume, maxVolume, speedNormalized);
+    
+        engineAudioSource.mute = SFXManager.Instance.IsSFXMuted();
+
+        if (GameManager.Instance != null)
+        {
+            if (!GameManager.Instance.raceStarted && engineAudioSource.isPlaying)
+            {
+                engineAudioSource.mute = true;
+            }
+            else if (GameManager.Instance.raceStarted && !engineAudioSource.isPlaying && !SFXManager.Instance.IsSFXMuted())
+            {
+                engineAudioSource.mute = false;
+            }
+        }
+        else
+        {
+            if (!SFXManager.Instance.IsSFXMuted())
+            {
+                engineAudioSource.mute = false;
+            }
+        }
+    }
+
+	private void RespawnToLastValid()
+    {
+        Transform bestPoint = null;
+
+        TrackChecker nearestZone = FindNearestTrackChecker();
+        if (nearestZone != null)
+        {
+            bestPoint = nearestZone.GetNearestPoint(transform.position);
+        }
+
+        if (bestPoint == null && fallbackRespawnPoint != null)
+        {
+            bestPoint = fallbackRespawnPoint;
+        }
+
+        if (bestPoint == null)
+        {
+            Debug.LogWarning("Brak dostepnego punktu respawnu!");
+            return;
+        }
+
+        transform.position = bestPoint.position + Vector3.up * 1f;
+        transform.rotation = Quaternion.Euler(0, bestPoint.eulerAngles.y, 0);
+
+        Rigidbody rb = GetComponent<Rigidbody>();
+        if (rb != null)
+        {
+            rb.linearVelocity = Vector3.zero;
+            rb.angularVelocity = Vector3.zero;
+        }
+
+        Debug.Log("Respawn na punkt: " + bestPoint.name);
+    }
+
+    private TrackChecker FindNearestTrackChecker()
+    {
+        TrackChecker[] zones = FindObjectsOfType<TrackChecker>();
+        float closestDist = Mathf.Infinity;
+        TrackChecker closestZone = null;
+
+        foreach (var zone in zones)
+        {
+            float dist = Vector3.Distance(transform.position, zone.transform.position);
+            if (dist < closestDist)
+            {
+                closestDist = dist;
+                closestZone = zone;
+            }
+        }
+
+        return closestZone;
     }
 
 
+    private void CheckTrackUnderneath()
+    {
+        Ray ray = new Ray(transform.position + Vector3.up * 0.5f, Vector3.down);
+        bool onTrack = Physics.Raycast(ray, trackCheckDistance, trackLayer);
+
+        if (onTrack)
+        {
+            lastValidPosition = transform.position;
+            isOffTrack = false;
+            offTrackTimer = 0f;
+        }
+        else
+        {
+            if (!isOffTrack)
+            {
+                isOffTrack = true;
+                offTrackTimer = 0f;
+            }
+            else
+            {
+                offTrackTimer += Time.deltaTime;
+                if (offTrackTimer >= respawnDelay)
+                {
+                    RespawnToLastValid();
+                    isOffTrack = false;
+                }
+            }
+        }
+    }
 
 
+    public IEnumerator FreezeAndTeleport(float duration)
+    {
+        Rigidbody rb = GetComponent<Rigidbody>();
+
+        if (rb != null)
+        {
+            rb.linearVelocity = Vector3.zero;
+            rb.angularVelocity = Vector3.zero;
+            rb.isKinematic = true; 
+        }
+
+        yield return new WaitForSeconds(duration * 0.5f); 
+
+        RespawnToLastValid(); 
+
+        yield return new WaitForSeconds(duration * 0.5f); 
+
+        if (rb != null)
+        {
+            rb.isKinematic = false; 
+        }
+    }
+
+    public IEnumerator FreezeCar(float duration)
+    {
+        Rigidbody rb = GetComponent<Rigidbody>();
+        if (rb != null)
+        {
+            float originalMotor = motorForce;
+
+            rb.linearVelocity = Vector3.zero;
+            rb.angularVelocity = Vector3.zero;
+            rb.isKinematic = true;
+            motorForce = 0f;
+
+
+            if (UIManager.Instance != null)
+            {
+                UIManager.Instance.ShowTemporaryMessage("Zatrzymano przez przeszkode!", true);
+            }
+
+
+            yield return new WaitForSeconds(duration);
+
+            rb.isKinematic = false;
+            motorForce = originalMotor;
+
+            if (UIManager.Instance != null)
+            {
+                UIManager.Instance.ShowTemporaryMessage("", false);
+            }
+        }
+    }
 }
