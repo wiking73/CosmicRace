@@ -682,7 +682,7 @@ GameObject:
   - component: {fileID: 387623837}
   m_Layer: 5
   m_Name: Mars
-  m_TagString: Untagged
+  m_TagString: UIButtonSound
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -816,7 +816,7 @@ GameObject:
   - component: {fileID: 395925331}
   m_Layer: 5
   m_Name: Back
-  m_TagString: Untagged
+  m_TagString: UIButtonSound
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1099,7 +1099,7 @@ GameObject:
   - component: {fileID: 565535058}
   m_Layer: 5
   m_Name: Uran
-  m_TagString: Untagged
+  m_TagString: UIButtonSound
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1757,7 +1757,7 @@ GameObject:
   - component: {fileID: 767747259}
   m_Layer: 5
   m_Name: Neptun
-  m_TagString: Untagged
+  m_TagString: UIButtonSound
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -2041,7 +2041,7 @@ GameObject:
   - component: {fileID: 846803733}
   m_Layer: 5
   m_Name: Mercury
-  m_TagString: Untagged
+  m_TagString: UIButtonSound
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -2175,7 +2175,7 @@ GameObject:
   - component: {fileID: 938493077}
   m_Layer: 5
   m_Name: Moon
-  m_TagString: Untagged
+  m_TagString: UIButtonSound
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -2388,7 +2388,7 @@ GameObject:
   - component: {fileID: 1000858614}
   m_Layer: 5
   m_Name: Saturn
-  m_TagString: Untagged
+  m_TagString: UIButtonSound
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -3167,7 +3167,7 @@ GameObject:
   - component: {fileID: 1146053979}
   m_Layer: 5
   m_Name: Jupiter
-  m_TagString: Untagged
+  m_TagString: UIButtonSound
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -3439,7 +3439,7 @@ GameObject:
   - component: {fileID: 1200406956}
   m_Layer: 5
   m_Name: Options
-  m_TagString: Untagged
+  m_TagString: UIButtonSound
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -3587,7 +3587,7 @@ GameObject:
   - component: {fileID: 1215924475}
   m_Layer: 5
   m_Name: Exit
-  m_TagString: Untagged
+  m_TagString: UIButtonSound
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -3871,7 +3871,7 @@ GameObject:
   - component: {fileID: 1317884877}
   m_Layer: 5
   m_Name: Earth
-  m_TagString: Untagged
+  m_TagString: UIButtonSound
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -4080,7 +4080,7 @@ GameObject:
   - component: {fileID: 1575983378}
   m_Layer: 5
   m_Name: Back
-  m_TagString: Untagged
+  m_TagString: UIButtonSound
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -4852,7 +4852,7 @@ GameObject:
   - component: {fileID: 1778646512}
   m_Layer: 5
   m_Name: Venus
-  m_TagString: Untagged
+  m_TagString: UIButtonSound
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -5261,7 +5261,7 @@ GameObject:
   - component: {fileID: 1951019176}
   m_Layer: 5
   m_Name: Play
-  m_TagString: Untagged
+  m_TagString: UIButtonSound
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
