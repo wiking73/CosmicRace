@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using System.Linq;
 
 public class RaceManager : MonoBehaviour
 {
@@ -14,6 +15,7 @@ public class RaceManager : MonoBehaviour
     public TimeCounter timeCounter;
     private bool raceFinished = false;
     private List<string> finishOrder = new List<string>();
+    public Position positionManager;
 
     private void Awake()
     {
@@ -82,7 +84,7 @@ public class RaceManager : MonoBehaviour
                 positionText.text = "Position: N/A";
             }
         }
-        positionText.text = "";
+        //positionText.text = "";
     }
 
     public void FinishRace(GameObject racer)
@@ -111,14 +113,24 @@ public class RaceManager : MonoBehaviour
         {
             resultPanel.SetActive(true);
         }
+
+        if (positionManager == null)
+        {
+            Debug.LogError("Brak przypisanego PositionManager w RaceManager!");
+            return;
+        }
         if (resultText != null)
         {
             resultText.text = "Results:\n";
 
-            for (int i = 0; i < finishOrder.Count; i++)
-            {
-                string racerName = finishOrder[i];
+            List<Transform> finalRanking = positionManager.allCars
+            .Where(car => car != null)
+            .OrderBy(car => car.position.z)
+            .ToList();
 
+            for (int i = 0; i < finalRanking.Count; i++)
+            {
+                string racerName = finalRanking[i].name;
 
                 if (racerName.StartsWith("Player"))
                 {
@@ -134,6 +146,14 @@ public class RaceManager : MonoBehaviour
                     resultText.text += $"{i + 1}. {racerName}\n";
                 }
             }
+        }
+    }
+
+    public void RegisterRacer(Transform racer)
+    {
+        if (!activeRacers.Contains(racer))
+        {
+            activeRacers.Add(racer);
         }
     }
 

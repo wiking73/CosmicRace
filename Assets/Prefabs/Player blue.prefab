@@ -78,8 +78,32 @@ PrefabInstance:
       propertyPath: trackCheckDistance
       value: 5
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: -2535468534411214650, guid: 3507a04562c316643b5eaa32755b5ef9, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 2446948841429222077, guid: 3507a04562c316643b5eaa32755b5ef9,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 4668805909587419869}
   m_SourcePrefab: {fileID: 100100000, guid: 3507a04562c316643b5eaa32755b5ef9, type: 3}
+--- !u!1 &5868067272590446128 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 2446948841429222077, guid: 3507a04562c316643b5eaa32755b5ef9,
+    type: 3}
+  m_PrefabInstance: {fileID: 8114042979949743245}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &4668805909587419869
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5868067272590446128}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a49002392dc51ea4d8cf13846b68301c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  currentWaypointIndex: 0
