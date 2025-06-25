@@ -52,6 +52,15 @@ public class SFXManager : MonoBehaviour
         SceneManager.sceneLoaded -= OnSceneLoaded;
     }
 
+    void Start()
+    {
+        Scene currentScene = SceneManager.GetActiveScene();
+        if (currentScene.name == "mainMenu")
+        {
+            SetupButtons();
+        }
+    }
+
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
         Debug.Log("SFXManager: Scene Loaded. Setting up buttons in scene: " + scene.name);
