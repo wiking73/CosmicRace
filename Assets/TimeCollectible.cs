@@ -4,7 +4,7 @@ public class TimeCollectible : MonoBehaviour
 {
     public AudioClip collectSound;
     public GameObject effectOnCollect;
-    public float bonusTime = 10f;
+    public float bonusTime = -1f;
 
     private void OnTriggerEnter(Collider other)
     {
