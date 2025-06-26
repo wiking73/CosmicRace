@@ -25,7 +25,7 @@ public class Danger : MonoBehaviour
                 Debug.Log("Car flipped!");
 
                
-                rb.velocity = Vector3.zero;
+                rb.linearVelocity = Vector3.zero;
                 rb.angularVelocity = Vector3.zero;
 
                 

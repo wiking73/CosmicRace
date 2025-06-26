@@ -75,7 +75,7 @@ public class CarController : MonoBehaviour
     }
     private void Update()
     {
-        if (SceneManager.GetActiveScene().name == "VehicleSelectScene")
+        if (SceneManager.GetActiveScene().name != "SampleScene")
         {            
             return;
         }
