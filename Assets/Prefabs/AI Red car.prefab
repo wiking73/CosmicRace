@@ -462,6 +462,10 @@ PrefabInstance:
         type: 3}
       insertIndex: -1
       addedObject: {fileID: 7264599682430764005}
+    - targetCorrespondingSourceObject: {fileID: 1248598967819147742, guid: c4cad50aa03bbca42938fe318344950b,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 7471648790007325421}
   m_SourcePrefab: {fileID: 100100000, guid: c4cad50aa03bbca42938fe318344950b, type: 3}
 --- !u!4 &2918356826950406096 stripped
 Transform:
@@ -585,3 +589,16 @@ MonoBehaviour:
   maxDistanceFromWaypoint: 12
   waypointThresholdDistance: 4
   aiActive: 1
+--- !u!114 &7471648790007325421
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7965348551497022094}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a49002392dc51ea4d8cf13846b68301c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  currentWaypointIndex: 0
