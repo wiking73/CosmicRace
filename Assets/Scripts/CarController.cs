@@ -75,10 +75,6 @@ public class CarController : MonoBehaviour
     }
     private void Update()
     {
-        if (SceneManager.GetActiveScene().name != "SampleScene")
-        {            
-            return;
-        }
         if (Input.GetKeyDown(resetKey))
         {
             ResetCarOrientation();
@@ -89,6 +85,10 @@ public class CarController : MonoBehaviour
         }
 
         UpdateSpeedDisplay();
+        if (SceneManager.GetActiveScene().name != "SampleScene")
+        {            
+            return;
+        }
         CheckTrackUnderneath();
 
     }
