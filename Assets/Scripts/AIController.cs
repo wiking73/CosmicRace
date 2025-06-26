@@ -28,6 +28,9 @@ public class AIController : MonoBehaviour
     public float maxDistanceFromWaypoint = 12f;
     public float waypointThresholdDistance = 4f;
 
+    public AudioClip collisionSound;
+    private AudioSource audioSource;
+
     public void TeleportToWaypoint(int waypointIndex)
     {
         if (waypointIndex < 0 || waypointIndex >= waypoints.Length)
@@ -49,6 +52,10 @@ public class AIController : MonoBehaviour
     void Start()
     {
         rb = GetComponent<Rigidbody>();
+        audioSource = GetComponent<AudioSource>();
+        if (audioSource == null)
+            audioSource = gameObject.AddComponent<AudioSource>();
+        audioSource.playOnAwake = false;
 
         if (gameObject.name.Contains("Red"))
         {
@@ -65,7 +72,7 @@ public class AIController : MonoBehaviour
         }
         else if (gameObject.name.Contains("Violet"))
         {
-            maxSpeed = 30f;
+            maxSpeed = 25f;
             acceleration = 25f;
             deceleration = 30f;
         }
@@ -312,14 +319,23 @@ public class AIController : MonoBehaviour
 
     private void OnCollisionEnter(Collision collision)
     {
-        if (collision.gameObject.CompareTag("Player"))
+        if (collision.gameObject.CompareTag("Player") || collision.gameObject.CompareTag("AI"))
         {
-            Debug.Log(gameObject.name + " zderzyï¿½ siï¿½ z graczem!");
+            Debug.Log(gameObject.name + " zderzy³ siê z " + collision.gameObject.name + "!");
+
+            
             targetSpeed = maxSpeed * slowdownMultiplier;
             slowdownTimer = collisionSlowdownTime;
 
+            
             Vector3 pushDir = (transform.position - collision.transform.position).normalized;
             rb.AddForce(pushDir * 300f);
+
+            
+            if (collisionSound != null && audioSource != null)
+            {
+                audioSource.PlayOneShot(collisionSound);
+            }
         }
     }
 

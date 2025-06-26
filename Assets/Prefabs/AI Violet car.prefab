@@ -588,6 +588,7 @@ MonoBehaviour:
   lookAheadDistance: 5
   maxDistanceFromWaypoint: 12
   waypointThresholdDistance: 4
+  collisionSound: {fileID: 8300000, guid: 24d581a6adca44341b20e93ff0b27e4c, type: 3}
   aiActive: 1
 --- !u!114 &-8386844593947943064
 MonoBehaviour:

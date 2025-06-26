@@ -59,6 +59,8 @@ public class CarController : MonoBehaviour
     [SerializeField] private Transform frontLeftWheelTransform, frontRightWheelTransform;
     [SerializeField] private Transform rearLeftWheelTransform, rearRightWheelTransform;
 
+    private CameraOrbit cameraOrbit;
+
 
     private void FixedUpdate()
     {
@@ -190,6 +192,8 @@ public class CarController : MonoBehaviour
             }
         }
 
+        cameraOrbit = FindObjectOfType<CameraOrbit>();
+
         if (engineSoundClip != null)
         {
             engineAudioSource.Play();
@@ -224,14 +228,17 @@ public class CarController : MonoBehaviour
         yield return new WaitForSeconds(duration);
         motorForce = this.originalMotorForce;
     }
-    
+
     private void ResetCarOrientation()
     {
-
         transform.position += Vector3.up * resetHeight;
         Vector3 uprightRotation = new Vector3(0, transform.eulerAngles.y, 0);
         transform.eulerAngles = uprightRotation;
 
+        if (cameraOrbit != null)
+        {
+            cameraOrbit.ForceRearView();
+        }
 
         Rigidbody rb = GetComponent<Rigidbody>();
         if (rb != null)
@@ -239,11 +246,13 @@ public class CarController : MonoBehaviour
             rb.linearVelocity = Vector3.zero;
             rb.angularVelocity = Vector3.zero;
         }
+
         if (UIManager.Instance != null)
         {
             UIManager.Instance.ShowFlipCarPrompt(false);
         }
     }
+
     public IEnumerator BoostMassAndSpeed(float massReduction, float motorBoost, float duration)
     {
         Rigidbody rb = GetComponent<Rigidbody>();
