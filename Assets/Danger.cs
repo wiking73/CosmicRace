@@ -24,17 +24,19 @@ public class Danger : MonoBehaviour
             {
                 Debug.Log("Car flipped!");
 
-                
-                rb.linearVelocity = Vector3.zero;
+               
+                rb.velocity = Vector3.zero;
                 rb.angularVelocity = Vector3.zero;
 
                 
                 other.transform.position += Vector3.up * liftAmount;
 
-               
+
                 Vector3 rot = other.transform.eulerAngles;
-                rot.x = (rot.x + 180f) % 360f;
+                rot.z = (rot.z + 180f) % 360f; 
                 other.transform.eulerAngles = rot;
+
+              
 
                 
                 rb.AddForce(Vector3.up * flipForce, ForceMode.Impulse);
