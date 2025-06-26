@@ -401,27 +401,27 @@ PrefabInstance:
     - target: {fileID: 1880317207959290724, guid: c4cad50aa03bbca42938fe318344950b,
         type: 3}
       propertyPath: m_LocalRotation.w
-      value: 0.46430486
+      value: 0.46498886
       objectReference: {fileID: 0}
     - target: {fileID: 1880317207959290724, guid: c4cad50aa03bbca42938fe318344950b,
         type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0.004064189
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1880317207959290724, guid: c4cad50aa03bbca42938fe318344950b,
         type: 3}
       propertyPath: m_LocalRotation.y
-      value: -0.884949
+      value: -0.88531655
       objectReference: {fileID: 0}
     - target: {fileID: 1880317207959290724, guid: c4cad50aa03bbca42938fe318344950b,
         type: 3}
       propertyPath: m_LocalRotation.z
-      value: 0.035633367
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1880317207959290724, guid: c4cad50aa03bbca42938fe318344950b,
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
-      value: 3.833
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1880317207959290724, guid: c4cad50aa03bbca42938fe318344950b,
         type: 3}
@@ -431,7 +431,7 @@ PrefabInstance:
     - target: {fileID: 1880317207959290724, guid: c4cad50aa03bbca42938fe318344950b,
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
-      value: 1.487
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4485099863708357545, guid: c4cad50aa03bbca42938fe318344950b,
         type: 3}
@@ -576,5 +576,12 @@ MonoBehaviour:
   deceleration: 20
   turnSpeed: 5
   rayDistance: 7
+  obstacleLayers:
+    serializedVersion: 2
+    m_Bits: 0
   collisionSlowdownTime: 2
   slowdownMultiplier: 0.5
+  lookAheadDistance: 5
+  maxDistanceFromWaypoint: 12
+  waypointThresholdDistance: 4
+  aiActive: 1

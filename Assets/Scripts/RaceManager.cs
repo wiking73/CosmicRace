@@ -1,6 +1,14 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using System.Linq;
+
+[System.Serializable]
+public class FinishResult
+{
+    public string racerName;
+    public float finishTime;
+}
 
 public class RaceManager : MonoBehaviour
 {
@@ -13,7 +21,8 @@ public class RaceManager : MonoBehaviour
     public UnityEngine.UI.Text countdownText;
     public TimeCounter timeCounter;
     private bool raceFinished = false;
-    private List<string> finishOrder = new List<string>();
+    private List<FinishResult> finishOrder = new List<FinishResult>();
+    public Position positionManager;
 
     private void Awake()
     {
@@ -87,21 +96,27 @@ public class RaceManager : MonoBehaviour
 
     public void FinishRace(GameObject racer)
     {
-        if (racer == null) return; 
+        if (racer == null) return;
 
-        if (!finishOrder.Contains(racer.name))
+        if (!finishOrder.Any(fr => fr.racerName == racer.name))
         {
-            finishOrder.Add(racer.name);
+            float finalTime = timeCounter != null ? timeCounter.timeRemaining : 0f;
+
+            finishOrder.Add(new FinishResult
+            {
+                racerName = racer.name,
+                finishTime = finalTime
+            });
         }
 
-        Debug.Log(racer.name);
+        Debug.Log(racer.name + " ukoñczy³ wyœcig!");
 
+        // Jeœli gracz ukoñczy³ — zakoñcz wyœcig i wyœwietl wyniki
         if (racer.name.StartsWith("Player") || (GameManager.Instance != null && GameManager.Instance.playerCarInstance == racer))
         {
-            Debug.Log("Gracz ukonczyl wyscig");
+            Debug.Log("Gracz ukoñczy³ wyœcig");
             raceFinished = true;
             ShowResults();
-        
         }
     }
 
@@ -111,29 +126,30 @@ public class RaceManager : MonoBehaviour
         {
             resultPanel.SetActive(true);
         }
+
         if (resultText != null)
         {
             resultText.text = "Results:\n";
 
+            // Posortuj po kolejnoœci mety
             for (int i = 0; i < finishOrder.Count; i++)
             {
-                string racerName = finishOrder[i];
+                var result = finishOrder[i];
+                float finalTime = result.finishTime;
+                int minutes = Mathf.FloorToInt(finalTime / 60f);
+                int seconds = Mathf.FloorToInt(finalTime % 60f);
+                string formattedTime = string.Format("{0:00}:{1:00}", minutes, seconds);
 
-
-                if (racerName.StartsWith("Player"))
-                {
-                    float finalTime = timeCounter.timeRemaining;
-                    int minutes = Mathf.FloorToInt(finalTime / 60f);
-                    int seconds = Mathf.FloorToInt(finalTime % 60f);
-                    string formattedTime = string.Format("{0:00}:{1:00}", minutes, seconds);
-
-                    resultText.text += $"{i + 1}. {racerName} (Time: {formattedTime})\n";
-                }
-                else
-                {
-                    resultText.text += $"{i + 1}. {racerName}\n";
-                }
+                resultText.text += $"{i + 1}. {result.racerName} (Time: {formattedTime})\n";
             }
+        }
+    }
+
+    public void RegisterRacer(Transform racer)
+    {
+        if (!activeRacers.Contains(racer))
+        {
+            activeRacers.Add(racer);
         }
     }
 
