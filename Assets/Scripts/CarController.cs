@@ -73,6 +73,10 @@ public class CarController : MonoBehaviour
     }
     private void Update()
     {
+        if (SceneManager.GetActiveScene().name == "VehicleSelectScene")
+        {            
+            return;
+        }
         if (Input.GetKeyDown(resetKey))
         {
             ResetCarOrientation();
