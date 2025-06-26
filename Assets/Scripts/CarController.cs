@@ -59,6 +59,7 @@ public class CarController : MonoBehaviour
     [SerializeField] private Transform frontLeftWheelTransform, frontRightWheelTransform;
     [SerializeField] private Transform rearLeftWheelTransform, rearRightWheelTransform;
 
+
     private void FixedUpdate()
     {
         if (SceneManager.GetActiveScene().name == "VehicleSelectScene")
@@ -202,6 +203,7 @@ public class CarController : MonoBehaviour
         {
             Debug.LogError("CarController: SFXManager.Instance is null. Cannot register engine audio source.", this);
         }
+
     }
 
     private void OnDestroy()

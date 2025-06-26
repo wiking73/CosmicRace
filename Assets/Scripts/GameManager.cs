@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 using TMPro;
 using UnityEngine.SceneManagement;
 using System.Collections.Generic;
@@ -19,9 +19,31 @@ public class GameManager : MonoBehaviour
     public Vector3 defaultSpawnPosition = new Vector3(4669.7f, 11.3f, 2133.91f);
     public Vector3 defaultSpawnRotationEuler = new Vector3(0f, -840.477f, 0f);
 
+    void SetGravityForScene()
+    {
+        switch (SceneManager.GetActiveScene().name)
+        {
+            case "Earth":
+                Physics.gravity = new Vector3(0, -9.81f, 0);
+                break;
+            case "SampleScene":
+                Physics.gravity = new Vector3(0, -8.5f, 0);
+                break;
+            case "Mercury":
+                Physics.gravity = new Vector3(0, -9f, 0);
+                break;
+            default:
+                Physics.gravity = new Vector3(0, -9.81f, 0);
+                break;
+        }
+
+        Debug.LogWarning("Ustawiono grawitację: " + Physics.gravity.y + " m/s² dla sceny: " + SceneManager.GetActiveScene().name);
+    }
+
 
     private void Awake()
     {
+        Debug.LogWarning("GameManager.Awake() odpalony w scenie: " + SceneManager.GetActiveScene().name);
         if (Instance == null)
         {
             Instance = this;
@@ -31,6 +53,8 @@ public class GameManager : MonoBehaviour
             Destroy(gameObject);
             return; 
         }
+
+        SetGravityForScene();
 
         Vector3 spawnPosition;
         Quaternion spawnRotation;
