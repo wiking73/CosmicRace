@@ -7,6 +7,9 @@ public class GameManager : MonoBehaviour
 {
     public static GameManager Instance;
 
+   
+
+
     public float startDelay = 3f;
     private float timer = 0f;
     public bool raceStarted = false;
