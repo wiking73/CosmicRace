@@ -129,4 +129,9 @@ public class GameManager : MonoBehaviour
     {
         countdownText.gameObject.SetActive(false);
     }
+
+    public void backToMainMenuButton()
+    {
+        SceneManager.LoadScene("mainMenu");
+    }
 }
