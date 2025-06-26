@@ -12,8 +12,8 @@ public class Danger : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {
-            if (dangerSound)
-                AudioSource.PlayClipAtPoint(dangerSound, transform.position);
+            if (dangerSound && SFXManager.Instance != null)
+                SFXManager.Instance.PlaySFX3D(dangerSound, transform.position);
 
             if (effectOnHit)
                 Instantiate(effectOnHit, transform.position, Quaternion.identity);

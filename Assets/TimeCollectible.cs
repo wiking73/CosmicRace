@@ -11,8 +11,8 @@ public class TimeCollectible : MonoBehaviour
         if (other.CompareTag("Player") )
         {
             
-            if (collectSound)
-                AudioSource.PlayClipAtPoint(collectSound, transform.position);
+            if (collectSound && SFXManager.Instance != null)
+                SFXManager.Instance.PlaySFX3D(collectSound, transform.position);
 
             if (effectOnCollect)
                 Instantiate(effectOnCollect, transform.position, Quaternion.identity);

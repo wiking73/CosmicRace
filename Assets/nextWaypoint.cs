@@ -16,8 +16,8 @@ public class nextWaypoint : MonoBehaviour
                 if (teleportEffect)
                     Instantiate(teleportEffect, other.transform.position, Quaternion.identity);
 
-                if (droneSound)
-                    AudioSource.PlayClipAtPoint(droneSound, other.transform.position);
+                if (droneSound && SFXManager.Instance != null)
+                    SFXManager.Instance.PlaySFX3D(droneSound, other.transform.position);
 
                 car.StartCoroutine(car.FreezeAndTeleport(freezeDuration));
             }

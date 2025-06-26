@@ -15,8 +15,9 @@ public class SFXManager : MonoBehaviour
 
     private AudioSource sfxAudioSource;
     private bool isSFXMuted = false;
-    
+
     private List<AudioSource> activeEngineAudioSources = new List<AudioSource>();
+
 
     void Awake()
     {
@@ -76,6 +77,7 @@ public class SFXManager : MonoBehaviour
             Button buttonComponent = buttonGO.GetComponent<Button>();
             if (buttonComponent != null)
             {
+                buttonComponent.onClick.RemoveAllListeners();
                 buttonComponent.onClick.AddListener(() => PlayClickSound());
             }
 
@@ -101,7 +103,7 @@ public class SFXManager : MonoBehaviour
         }
     }
 
-     public void UnregisterEngineAudioSource(AudioSource source)
+    public void UnregisterEngineAudioSource(AudioSource source)
     {
         if (source != null && activeEngineAudioSources.Contains(source))
         {
@@ -113,7 +115,7 @@ public class SFXManager : MonoBehaviour
     {
         isSFXMuted = !isSFXMuted;
         sfxAudioSource.mute = isSFXMuted;
-        
+
         foreach (AudioSource engineSource in activeEngineAudioSources)
         {
             if (engineSource != null)
@@ -121,6 +123,7 @@ public class SFXManager : MonoBehaviour
                 engineSource.mute = isSFXMuted;
             }
         }
+
         Debug.Log("SFX (UI and Engine) Muted: " + isSFXMuted);
     }
 
@@ -144,12 +147,19 @@ public class SFXManager : MonoBehaviour
             sfxAudioSource.PlayOneShot(hoverSound);
         }
     }
-    
-    public void PlaySFX(AudioClip clip, float volume = 1.0f)
+
+    public void PlaySFX2D(AudioClip clip, float volume = 1.0f)
     {
         if (clip != null && sfxAudioSource != null && !isSFXMuted)
         {
             sfxAudioSource.PlayOneShot(clip, volume);
         }
+    }
+    
+     public void PlaySFX3D(AudioClip clip, Vector3 position)
+    {
+        if (clip == null || isSFXMuted) return;
+
+        AudioSource.PlayClipAtPoint(clip, position);
     }
 }

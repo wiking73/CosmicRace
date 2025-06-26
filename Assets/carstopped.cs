@@ -16,8 +16,8 @@ public class carstopped : MonoBehaviour
                 if (trapEffect)
                     Instantiate(trapEffect, other.transform.position, Quaternion.identity);
 
-                if (trapSound)
-                    AudioSource.PlayClipAtPoint(trapSound, other.transform.position);
+                if (trapSound && SFXManager.Instance != null)
+                    SFXManager.Instance.PlaySFX3D(trapSound, other.transform.position); 
 
                 car.StartCoroutine(car.FreezeCar(freezeDuration));
             }
