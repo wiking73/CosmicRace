@@ -27,16 +27,7 @@ public class CarController : MonoBehaviour
 
     [SerializeField] private LayerMask trackLayer;
     [SerializeField] private float trackCheckDistance = 0.1f;
-    [SerializeField] private Transform fallbackRespawnPoint;
     private Vector3 lastValidPosition;
-    private List<Transform> currentRespawnPoints = new List<Transform>();
-    public void SetRespawnPoints(Transform[] newPoints)
-    {
-        currentRespawnPoints = new List<Transform>(newPoints);
-    }
-
-
-
 
     private bool isOffTrack = false;
     private float offTrackTimer = 0f;
@@ -309,20 +300,19 @@ public class CarController : MonoBehaviour
     {
         Transform bestPoint = null;
 
-        TrackChecker nearestZone = FindNearestTrackChecker();
-        if (nearestZone != null)
+        if (TrackManager.Instance != null)
         {
-            bestPoint = nearestZone.GetNearestPoint(transform.position);
+            bestPoint = TrackManager.Instance.GetNearestRespawnPoint(transform.position);
         }
-
-        if (bestPoint == null && fallbackRespawnPoint != null)
+        else
         {
-            bestPoint = fallbackRespawnPoint;
+            Debug.LogError("CarController: Brak instancji TrackManager w scenie! Nie można zrespawnować samochodu. Upewnij się, że GameObject 'TrackManager' z komponentem 'TrackManager.cs' istnieje i jest aktywny.");
+            return;
         }
 
         if (bestPoint == null)
         {
-            Debug.LogWarning("Brak dostepnego punktu respawnu!");
+            Debug.LogWarning("Brak dostępnego punktu respawnu z TrackManager. Sprawdź, czy któryś TrackChecker został aktywowany i ma przypisany TrackWaypointContainer z punktami, lub ustaw domyślny Fallback Respawn Point w TrackManager.", this);
             return;
         }
 
@@ -338,26 +328,6 @@ public class CarController : MonoBehaviour
 
         Debug.Log("Respawn na punkt: " + bestPoint.name);
     }
-
-    private TrackChecker FindNearestTrackChecker()
-    {
-        TrackChecker[] zones = FindObjectsOfType<TrackChecker>();
-        float closestDist = Mathf.Infinity;
-        TrackChecker closestZone = null;
-
-        foreach (var zone in zones)
-        {
-            float dist = Vector3.Distance(transform.position, zone.transform.position);
-            if (dist < closestDist)
-            {
-                closestDist = dist;
-                closestZone = zone;
-            }
-        }
-
-        return closestZone;
-    }
-
 
     private void CheckTrackUnderneath()
     {

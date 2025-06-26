@@ -2,36 +2,24 @@ using UnityEngine;
 
 public class TrackChecker : MonoBehaviour
 {
-    [SerializeField] private Transform[] zoneRespawnPoints;
+    public TrackWaypointContainer trackWaypointContainer;
 
     private void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("Player"))
         {
-            CarController car = other.GetComponent<CarController>();
-            if (car != null)
+            if (TrackManager.Instance != null && trackWaypointContainer != null)
             {
-                car.SetRespawnPoints(zoneRespawnPoints);
-                Debug.Log("Aktualizacja punkt�w respawnu na nowe (TrackChecker): " + name);
+                TrackManager.Instance.SetActiveRespawnPoints(trackWaypointContainer);
+                Debug.Log("TrackChecker: Zaktualizowano punkty respawnu w TrackManager na kontener: " + trackWaypointContainer.name, this);
+            }
+            else
+            {
+                if (TrackManager.Instance == null)
+                    Debug.LogError("TrackChecker: TrackManager.Instance jest NULL! Upewnij się, że GameObject 'TrackManager' z komponentem 'TrackManager.cs' istnieje w scenie.", this);
+                if (trackWaypointContainer == null)
+                    Debug.LogError("TrackChecker: Pole 'Track Waypoint Container' nie jest przypisane w Inspektorze dla obiektu " + gameObject.name + "!", this);
             }
         }
     }
-    public Transform GetNearestPoint(Vector3 referencePosition)
-    {
-        float minDist = float.MaxValue;
-        Transform nearest = null;
-
-        foreach (var point in zoneRespawnPoints)
-        {
-            float dist = Vector3.Distance(referencePosition, point.position);
-            if (dist < minDist)
-            {
-                minDist = dist;
-                nearest = point;
-            }
-        }
-
-        return nearest;
-    }
-
 }
