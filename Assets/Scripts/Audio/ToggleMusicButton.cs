@@ -4,28 +4,57 @@ using UnityEngine.UI;
 public class ToggleMusicButton : MonoBehaviour
 {
     public Button toggleButton;
-    public Text buttonText;
+    public Image buttonIcon; 
+    public Sprite musicOnIcon; 
+    public Sprite musicOffIcon;
+
 
     void Start()
     {
-        toggleButton.onClick.AddListener(ToggleMusicIcon);
-        UpdateButtonText();
+        if (toggleButton == null)
+        {
+            toggleButton = GetComponent<Button>();
+        }
+
+        if (toggleButton != null)
+        {
+            toggleButton.onClick.AddListener(ToggleMusicState);
+        }
+        else
+        {
+            Debug.LogError("ToggleMusicButton: Toggle Button component is null on Start! Make sure it's assigned or on the same GameObject.", this);
+            enabled = false;
+            return;
+        }
+
+        if (buttonIcon == null || musicOnIcon == null || musicOffIcon == null)
+        {
+            Debug.LogError("ToggleMusicButton: Button Icon Image or Sprites not assigned in the Inspector!", this);
+            enabled = false;
+            return;
+        }
+
+        UpdateButtonIcon();
     }
 
-    void ToggleMusicIcon()
+    void ToggleMusicState()
     {
         if (MusicManager.Instance != null)
         {
             MusicManager.Instance.ToggleMusic();
-            UpdateButtonText();
+            UpdateButtonIcon();
+        }
+        else
+        {
+            Debug.LogError("ToggleMusicButton: MusicManager.Instance is null when clicking button.", this);
         }
     }
 
-    void UpdateButtonText()
+    void UpdateButtonIcon()
     {
-        if (MusicManager.Instance != null)
+        if (MusicManager.Instance != null && buttonIcon != null)
         {
-            buttonText.text = MusicManager.Instance.IsMuted() ? "unmute" : "mute";
+            buttonIcon.sprite = MusicManager.Instance.IsMuted() ? musicOffIcon : musicOnIcon;
         }
     }
 }

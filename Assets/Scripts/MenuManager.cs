@@ -13,12 +13,23 @@ public class MenuManager : MonoBehaviour
     {
         mainMenuPanel.SetActive(false);
         trackSelectPanel.SetActive(true);
+        if (SFXManager.Instance != null)
+        {
+            SFXManager.Instance.SetupButtons();
+            Debug.Log("MenuManager: Called SetupButtons for trackSelectPanel.");
+        }
     }
 
     public void Options()
     {
         mainMenuPanel.SetActive(false);
         optionsPanel.SetActive(true);
+
+        if (SFXManager.Instance != null)
+        {
+            SFXManager.Instance.SetupButtons();
+            Debug.Log("MenuManager: Called SetupButtons for optionsPanel.");
+        }
     }
 
     public void Exit()
@@ -32,6 +43,12 @@ public class MenuManager : MonoBehaviour
         trackSelectPanel.SetActive(false);
         optionsPanel.SetActive(false);
         mainMenuPanel.SetActive(true);
+        
+        if (SFXManager.Instance != null)
+        {
+            SFXManager.Instance.SetupButtons();
+            Debug.Log("MenuManager: Called SetupButtons for mainMenuPanel.");
+        }
     }
 
     public void SelectTrackAndLoadVehicleSelectScene(string sceneNameOfTrack)

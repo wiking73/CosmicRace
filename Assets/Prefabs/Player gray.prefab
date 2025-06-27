@@ -80,6 +80,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 676239942702863751}
+  - component: {fileID: 1070113824379985850}
   m_Layer: 0
   m_Name: FollowPoint
   m_TagString: Untagged
@@ -99,9 +100,29 @@ Transform:
   m_LocalPosition: {x: 0, y: 1.12, z: -0.17}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 6647697239717083977}
   m_Father: {fileID: 3080074761187956743}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1070113824379985850
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3633026246061811124}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 83a59bf299af6304ebaca5a4c92f54b2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  target: {fileID: 3080074761187956743}
+  followDistance: 10
+  followHeight: 2
+  flippedYOffset: 6
+  positionDamping: 5
+  rotationDamping: 3
+  maxRotationLag: 30
 --- !u!1 &4998786117371126722
 GameObject:
   m_ObjectHideFlags: 0
@@ -421,12 +442,12 @@ Transform:
   m_GameObject: {fileID: 8461506743088481873}
   serializedVersion: 2
   m_LocalRotation: {x: -0.060107347, y: -0.0031457841, z: 0.00018943101, w: -0.99818695}
-  m_LocalPosition: {x: -0.039998412, y: 1.8899992, z: -6.5400057}
-  m_LocalScale: {x: 0.50000006, y: 0.50000006, z: 0.5}
+  m_LocalPosition: {x: -0.03999853, y: 0.76999915, z: -6.3700056}
+  m_LocalScale: {x: 0.50000006, y: 0.5000001, z: 0.5}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 2803150949571827368}
-  m_Father: {fileID: 3080074761187956743}
+  m_Father: {fileID: 676239942702863751}
   m_LocalEulerAnglesHint: {x: 7.608, y: 6.412, z: 1.367}
 --- !u!114 &4368572549801193053
 MonoBehaviour:
@@ -652,10 +673,6 @@ PrefabInstance:
         type: 3}
       insertIndex: -1
       addedObject: {fileID: 676239942702863751}
-    - targetCorrespondingSourceObject: {fileID: 1880317207959290724, guid: c4cad50aa03bbca42938fe318344950b,
-        type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 6647697239717083977}
     - targetCorrespondingSourceObject: {fileID: 6294174624470428800, guid: c4cad50aa03bbca42938fe318344950b,
         type: 3}
       insertIndex: -1
@@ -673,6 +690,10 @@ PrefabInstance:
         type: 3}
       insertIndex: -1
       addedObject: {fileID: 4360486264123951005}
+    - targetCorrespondingSourceObject: {fileID: 1248598967819147742, guid: c4cad50aa03bbca42938fe318344950b,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: -2535468534411214650}
   m_SourcePrefab: {fileID: 100100000, guid: c4cad50aa03bbca42938fe318344950b, type: 3}
 --- !u!4 &83319012528204989 stripped
 Transform:
@@ -721,7 +742,7 @@ Rigidbody:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2446948841429222077}
   serializedVersion: 4
-  m_Mass: 1300
+  m_Mass: 1290
   m_Drag: 0
   m_AngularDrag: 0.05
   m_CenterOfMass: {x: 0, y: 0, z: 0}
@@ -762,7 +783,6 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 64
   trackCheckDistance: 5
-  fallbackRespawnPoint: {fileID: 0}
   respawnDelay: 1.5
   resetHeight: 1
   resetKey: 114
@@ -778,6 +798,19 @@ MonoBehaviour:
   frontRightWheelTransform: {fileID: 83319012528204989}
   rearLeftWheelTransform: {fileID: 8324331765715871137}
   rearRightWheelTransform: {fileID: 893074497196051074}
+--- !u!114 &-2535468534411214650
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2446948841429222077}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a49002392dc51ea4d8cf13846b68301c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  currentWaypointIndex: 0
 --- !u!4 &3080074761187956743 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 1880317207959290724, guid: c4cad50aa03bbca42938fe318344950b,

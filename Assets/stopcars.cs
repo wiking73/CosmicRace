@@ -10,8 +10,8 @@ public class stopcars : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {
-            if (stopSound)
-                AudioSource.PlayClipAtPoint(stopSound, transform.position);
+            if (stopSound && SFXManager.Instance != null)
+                SFXManager.Instance.PlaySFX3D(stopSound, transform.position);
 
             if (stopEffect)
                 Instantiate(stopEffect, transform.position, Quaternion.identity);

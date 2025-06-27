@@ -4,7 +4,9 @@ using UnityEngine.UI;
 public class ToggleSFXButton : MonoBehaviour
 {
     public Button toggleButton;
-    public Text buttonText;
+    public Image buttonIcon;
+    public Sprite sfxOnIcon;
+    public Sprite sfxOffIcon;
 
     void Start()
     {
@@ -14,27 +16,37 @@ public class ToggleSFXButton : MonoBehaviour
         }
         if (toggleButton != null)
         {
-            toggleButton.onClick.AddListener(ToggleSFXSound);
+            toggleButton.onClick.AddListener(ToggleSFXState);
         }
         else
         {
             Debug.LogError("ToggleSFXButton: Toggle Button component is null on Start! Make sure it's assigned or on the same GameObject.", this);
+            enabled = false;
             return;
         }
         if (SFXManager.Instance == null)
         {
             Debug.LogError("ToggleSFXButton: SFXManager.Instance is null. Ensure SFXManager is in your scene and has a higher Script Execution Order.", this);
+            enabled = false;
+            return;
+        }
+        
+        if (buttonIcon == null || sfxOnIcon == null || sfxOffIcon == null)
+        {
+            Debug.LogError("ToggleSFXButton: Button Icon Image or Sprites not assigned in the Inspector!", this);
+            enabled = false;
+            return;
         }
 
-        UpdateButtonText();
+        UpdateButtonIcon();
     }
 
-    void ToggleSFXSound()
+    void ToggleSFXState()
     {
         if (SFXManager.Instance != null)
         {
             SFXManager.Instance.ToggleSFXSound();
-            UpdateButtonText();
+            UpdateButtonIcon();
         }
         else
         {
@@ -42,18 +54,11 @@ public class ToggleSFXButton : MonoBehaviour
         }
     }
 
-    void UpdateButtonText()
+    void UpdateButtonIcon()
     {
-        if (SFXManager.Instance != null)
+        if (SFXManager.Instance != null && buttonIcon != null)
         {
-            if (buttonText != null)
-            {
-                buttonText.text = SFXManager.Instance.IsSFXMuted() ? "UNMUTE" : "MUTE";
-            }
-            else
-            {
-                Debug.LogWarning("ToggleSFXButton: Button Text component is not assigned in the Inspector!", this);
-            }
+            buttonIcon.sprite = SFXManager.Instance.IsSFXMuted() ? sfxOffIcon : sfxOnIcon;
         }
     }
 }

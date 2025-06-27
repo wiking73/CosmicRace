@@ -429,6 +429,7 @@ GameObject:
   - component: {fileID: 951164811015660988}
   - component: {fileID: 3202360201305310175}
   - component: {fileID: 8483578144434466577}
+  - component: {fileID: 7550974834235885309}
   m_Layer: 0
   m_Name: AI Yellow car
   m_TagString: Untagged
@@ -558,7 +559,21 @@ MonoBehaviour:
   lookAheadDistance: 5
   maxDistanceFromWaypoint: 12
   waypointThresholdDistance: 4
+  collisionSound: {fileID: 8300000, guid: 24d581a6adca44341b20e93ff0b27e4c, type: 3}
   aiActive: 1
+--- !u!114 &7550974834235885309
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5607695542782021303}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a49002392dc51ea4d8cf13846b68301c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  currentWaypointIndex: 0
 --- !u!1 &6104622312183984435
 GameObject:
   m_ObjectHideFlags: 0

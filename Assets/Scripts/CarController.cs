@@ -27,16 +27,7 @@ public class CarController : MonoBehaviour
 
     [SerializeField] private LayerMask trackLayer;
     [SerializeField] private float trackCheckDistance = 0.1f;
-    [SerializeField] private Transform fallbackRespawnPoint;
     private Vector3 lastValidPosition;
-    private List<Transform> currentRespawnPoints = new List<Transform>();
-    public void SetRespawnPoints(Transform[] newPoints)
-    {
-        currentRespawnPoints = new List<Transform>(newPoints);
-    }
-
-
-
 
     private bool isOffTrack = false;
     private float offTrackTimer = 0f;
@@ -58,6 +49,9 @@ public class CarController : MonoBehaviour
     // Wheels
     [SerializeField] private Transform frontLeftWheelTransform, frontRightWheelTransform;
     [SerializeField] private Transform rearLeftWheelTransform, rearRightWheelTransform;
+
+    private CameraOrbit cameraOrbit;
+
 
     private void FixedUpdate()
     {
@@ -91,6 +85,10 @@ public class CarController : MonoBehaviour
         }
 
         UpdateSpeedDisplay();
+        if (SceneManager.GetActiveScene().name != "SampleScene")
+        {            
+            return;
+        }
         CheckTrackUnderneath();
 
     }
@@ -189,6 +187,8 @@ public class CarController : MonoBehaviour
             }
         }
 
+        cameraOrbit = FindObjectOfType<CameraOrbit>();
+
         if (engineSoundClip != null)
         {
             engineAudioSource.Play();
@@ -201,7 +201,8 @@ public class CarController : MonoBehaviour
         else
         {
             Debug.LogError("CarController: SFXManager.Instance is null. Cannot register engine audio source.", this);
-        }   
+        }
+
     }
 
     private void OnDestroy()
@@ -222,14 +223,17 @@ public class CarController : MonoBehaviour
         yield return new WaitForSeconds(duration);
         motorForce = this.originalMotorForce;
     }
-    
+
     private void ResetCarOrientation()
     {
-
         transform.position += Vector3.up * resetHeight;
         Vector3 uprightRotation = new Vector3(0, transform.eulerAngles.y, 0);
         transform.eulerAngles = uprightRotation;
 
+        if (cameraOrbit != null)
+        {
+            cameraOrbit.ForceRearView();
+        }
 
         Rigidbody rb = GetComponent<Rigidbody>();
         if (rb != null)
@@ -237,11 +241,13 @@ public class CarController : MonoBehaviour
             rb.linearVelocity = Vector3.zero;
             rb.angularVelocity = Vector3.zero;
         }
+
         if (UIManager.Instance != null)
         {
             UIManager.Instance.ShowFlipCarPrompt(false);
         }
     }
+
     public IEnumerator BoostMassAndSpeed(float massReduction, float motorBoost, float duration)
     {
         Rigidbody rb = GetComponent<Rigidbody>();
@@ -307,20 +313,19 @@ public class CarController : MonoBehaviour
     {
         Transform bestPoint = null;
 
-        TrackChecker nearestZone = FindNearestTrackChecker();
-        if (nearestZone != null)
+        if (TrackManager.Instance != null)
         {
-            bestPoint = nearestZone.GetNearestPoint(transform.position);
+            bestPoint = TrackManager.Instance.GetNearestRespawnPoint(transform.position);
         }
-
-        if (bestPoint == null && fallbackRespawnPoint != null)
+        else
         {
-            bestPoint = fallbackRespawnPoint;
+            Debug.LogError("CarController: Brak instancji TrackManager w scenie! Nie można zrespawnować samochodu. Upewnij się, że GameObject 'TrackManager' z komponentem 'TrackManager.cs' istnieje i jest aktywny.");
+            return;
         }
 
         if (bestPoint == null)
         {
-            Debug.LogWarning("Brak dostepnego punktu respawnu!");
+            Debug.LogWarning("Brak dostępnego punktu respawnu z TrackManager. Sprawdź, czy któryś TrackChecker został aktywowany i ma przypisany TrackWaypointContainer z punktami, lub ustaw domyślny Fallback Respawn Point w TrackManager.", this);
             return;
         }
 
@@ -336,26 +341,6 @@ public class CarController : MonoBehaviour
 
         Debug.Log("Respawn na punkt: " + bestPoint.name);
     }
-
-    private TrackChecker FindNearestTrackChecker()
-    {
-        TrackChecker[] zones = FindObjectsOfType<TrackChecker>();
-        float closestDist = Mathf.Infinity;
-        TrackChecker closestZone = null;
-
-        foreach (var zone in zones)
-        {
-            float dist = Vector3.Distance(transform.position, zone.transform.position);
-            if (dist < closestDist)
-            {
-                closestDist = dist;
-                closestZone = zone;
-            }
-        }
-
-        return closestZone;
-    }
-
 
     private void CheckTrackUnderneath()
     {
