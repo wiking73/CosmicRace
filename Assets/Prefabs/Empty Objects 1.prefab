@@ -144,6 +144,7 @@ MonoBehaviour:
   - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}
+  waypoints: []
 --- !u!1 &6314193005249254617
 GameObject:
   m_ObjectHideFlags: 0
@@ -236,6 +237,51 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   currentScore: 0
   scoreText: {fileID: 0}
+--- !u!1 &6927395303411397598
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1590777717914390048}
+  - component: {fileID: 8519776757623130593}
+  m_Layer: 0
+  m_Name: PauseManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1590777717914390048
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6927395303411397598}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0.23826586, z: 0, w: 0.9712}
+  m_LocalPosition: {x: 444.19992, y: 188.98, z: 1263.6001}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 6512088981018373129}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &8519776757623130593
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6927395303411397598}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cbc30832866791246afc762bb692e4a0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  pausePanel: {fileID: 0}
 --- !u!1 &7374813855868670979
 GameObject:
   m_ObjectHideFlags: 0
@@ -391,6 +437,7 @@ Transform:
   - {fileID: 935310898611332051}
   - {fileID: 8350914225676267174}
   - {fileID: 4318430303196763567}
+  - {fileID: 1590777717914390048}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 27.568, z: 0}
 --- !u!1 &9086888267174612473
@@ -443,3 +490,4 @@ MonoBehaviour:
   resultPanel: {fileID: 0}
   countdownText: {fileID: 0}
   timeCounter: {fileID: 0}
+  positionManager: {fileID: 0}
