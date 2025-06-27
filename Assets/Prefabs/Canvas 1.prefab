@@ -150,7 +150,7 @@ GameObject:
   - component: {fileID: 5365151077285050880}
   m_Layer: 5
   m_Name: PauseButton
-  m_TagString: Untagged
+  m_TagString: UIButtonSound
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -288,8 +288,6 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1253356775147121576}
-  - {fileID: 7546498198447243138}
-  - {fileID: 604609971101362511}
   - {fileID: 2629509115446638032}
   - {fileID: 1114361291750679460}
   - {fileID: 6118857910978257950}
@@ -300,6 +298,8 @@ RectTransform:
   - {fileID: 5337317905629003807}
   - {fileID: 4593403452159635625}
   - {fileID: 8659821056678383285}
+  - {fileID: 7546498198447243138}
+  - {fileID: 604609971101362511}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -550,7 +550,7 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1168206556974184272}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -754,7 +754,7 @@ GameObject:
   - component: {fileID: 7845591277314414349}
   m_Layer: 5
   m_Name: ResumeButton
-  m_TagString: Untagged
+  m_TagString: UIButtonSound
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
