@@ -119,6 +119,7 @@ MonoBehaviour:
   target: {fileID: 3080074761187956743}
   followDistance: 10
   followHeight: 2
+  flippedYOffset: 6
   positionDamping: 5
   rotationDamping: 3
   maxRotationLag: 30
@@ -741,7 +742,7 @@ Rigidbody:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2446948841429222077}
   serializedVersion: 4
-  m_Mass: 1300
+  m_Mass: 1290
   m_Drag: 0
   m_AngularDrag: 0.05
   m_CenterOfMass: {x: 0, y: 0, z: 0}
@@ -782,7 +783,6 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 64
   trackCheckDistance: 5
-  fallbackRespawnPoint: {fileID: 0}
   respawnDelay: 1.5
   resetHeight: 1
   resetKey: 114
