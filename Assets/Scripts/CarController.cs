@@ -33,12 +33,12 @@ public class CarController : MonoBehaviour
     private float offTrackTimer = 0f;
     [SerializeField] private float respawnDelay = 1.5f;
 
-
-
-
+    [Header("Respawn & Reset Controls")]
     [SerializeField] private float resetHeight = 1.0f;
-    [SerializeField] private KeyCode resetKey = KeyCode.R;
-    // Settings
+    [SerializeField] private KeyCode resetOrientationKey = KeyCode.R;
+    [SerializeField] private KeyCode manualRespawnKey = KeyCode.P;
+
+    [Header("Settings")]
     [SerializeField] private float motorForce, breakForce, maxSteerAngle;
     [SerializeField] private float boostMultiplier = 3000f;
 
@@ -75,13 +75,19 @@ public class CarController : MonoBehaviour
     }
     private void Update()
     {
-        if (Input.GetKeyDown(resetKey))
+        if (Input.GetKeyDown(resetOrientationKey))
         {
             ResetCarOrientation();
         }
-        if (UIManager.Instance != null) 
+
+        if (Input.GetKeyDown(manualRespawnKey))
         {
-            UIManager.Instance.ShowFlipCarPrompt(IsCarFlipped()); 
+            RespawnToLastValid();
+        }
+        
+        if (UIManager.Instance != null)
+        {
+            UIManager.Instance.ShowFlipCarPrompt(IsCarFlipped());
         }
 
         UpdateSpeedDisplay();
@@ -338,6 +344,8 @@ public class CarController : MonoBehaviour
             rb.linearVelocity = Vector3.zero;
             rb.angularVelocity = Vector3.zero;
         }
+        isOffTrack = false;
+        offTrackTimer = 0f;
 
         Debug.Log("Respawn na punkt: " + bestPoint.name);
     }
