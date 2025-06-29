@@ -6576,6 +6576,43 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: e48fb36d8a8241341bfe0174b3ba06f8, type: 3}
+--- !u!84 &1015582062
+RenderTexture:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: 
+  m_ImageContentsHash:
+    serializedVersion: 2
+    Hash: 00000000000000000000000000000000
+  m_IsAlphaChannelOptional: 0
+  serializedVersion: 6
+  m_Width: 257
+  m_Height: 257
+  m_AntiAliasing: 1
+  m_MipCount: -1
+  m_DepthStencilFormat: 94
+  m_ColorFormat: 4
+  m_MipMap: 0
+  m_GenerateMips: 1
+  m_SRGB: 1
+  m_UseDynamicScale: 0
+  m_UseDynamicScaleExplicit: 0
+  m_BindMS: 0
+  m_EnableCompatibleFormat: 1
+  m_EnableRandomWrite: 0
+  m_TextureSettings:
+    serializedVersion: 2
+    m_FilterMode: 1
+    m_Aniso: 0
+    m_MipBias: 0
+    m_WrapU: 1
+    m_WrapV: 1
+    m_WrapW: 1
+  m_Dimension: 2
+  m_VolumeDepth: 1
+  m_ShadowSamplingMode: 2
 --- !u!1 &1022701709
 GameObject:
   m_ObjectHideFlags: 0
@@ -8356,6 +8393,231 @@ PrefabInstance:
       propertyPath: 'positionTexts.Array.data[3]'
       value: 
       objectReference: {fileID: 1338330578}
+    - target: {fileID: 7363715940889774426, guid: 13ec7ff7dd226d349b657989439aa3f5,
+        type: 3}
+      propertyPath: allRespawnPoints.Array.size
+      value: 43
+      objectReference: {fileID: 0}
+    - target: {fileID: 7363715940889774426, guid: 13ec7ff7dd226d349b657989439aa3f5,
+        type: 3}
+      propertyPath: defaultFallbackRespawnPoint
+      value: 
+      objectReference: {fileID: 840302821}
+    - target: {fileID: 7363715940889774426, guid: 13ec7ff7dd226d349b657989439aa3f5,
+        type: 3}
+      propertyPath: 'allRespawnPoints.Array.data[0]'
+      value: 
+      objectReference: {fileID: 840302821}
+    - target: {fileID: 7363715940889774426, guid: 13ec7ff7dd226d349b657989439aa3f5,
+        type: 3}
+      propertyPath: 'allRespawnPoints.Array.data[1]'
+      value: 
+      objectReference: {fileID: 474868930}
+    - target: {fileID: 7363715940889774426, guid: 13ec7ff7dd226d349b657989439aa3f5,
+        type: 3}
+      propertyPath: 'allRespawnPoints.Array.data[2]'
+      value: 
+      objectReference: {fileID: 1140163410}
+    - target: {fileID: 7363715940889774426, guid: 13ec7ff7dd226d349b657989439aa3f5,
+        type: 3}
+      propertyPath: 'allRespawnPoints.Array.data[3]'
+      value: 
+      objectReference: {fileID: 245194266}
+    - target: {fileID: 7363715940889774426, guid: 13ec7ff7dd226d349b657989439aa3f5,
+        type: 3}
+      propertyPath: 'allRespawnPoints.Array.data[4]'
+      value: 
+      objectReference: {fileID: 254028343}
+    - target: {fileID: 7363715940889774426, guid: 13ec7ff7dd226d349b657989439aa3f5,
+        type: 3}
+      propertyPath: 'allRespawnPoints.Array.data[5]'
+      value: 
+      objectReference: {fileID: 2019881071}
+    - target: {fileID: 7363715940889774426, guid: 13ec7ff7dd226d349b657989439aa3f5,
+        type: 3}
+      propertyPath: 'allRespawnPoints.Array.data[6]'
+      value: 
+      objectReference: {fileID: 980347235}
+    - target: {fileID: 7363715940889774426, guid: 13ec7ff7dd226d349b657989439aa3f5,
+        type: 3}
+      propertyPath: 'allRespawnPoints.Array.data[7]'
+      value: 
+      objectReference: {fileID: 1793153131}
+    - target: {fileID: 7363715940889774426, guid: 13ec7ff7dd226d349b657989439aa3f5,
+        type: 3}
+      propertyPath: 'allRespawnPoints.Array.data[8]'
+      value: 
+      objectReference: {fileID: 725406180}
+    - target: {fileID: 7363715940889774426, guid: 13ec7ff7dd226d349b657989439aa3f5,
+        type: 3}
+      propertyPath: 'allRespawnPoints.Array.data[9]'
+      value: 
+      objectReference: {fileID: 1250164466}
+    - target: {fileID: 7363715940889774426, guid: 13ec7ff7dd226d349b657989439aa3f5,
+        type: 3}
+      propertyPath: 'allRespawnPoints.Array.data[10]'
+      value: 
+      objectReference: {fileID: 1095680037}
+    - target: {fileID: 7363715940889774426, guid: 13ec7ff7dd226d349b657989439aa3f5,
+        type: 3}
+      propertyPath: 'allRespawnPoints.Array.data[11]'
+      value: 
+      objectReference: {fileID: 975134847}
+    - target: {fileID: 7363715940889774426, guid: 13ec7ff7dd226d349b657989439aa3f5,
+        type: 3}
+      propertyPath: 'allRespawnPoints.Array.data[12]'
+      value: 
+      objectReference: {fileID: 949692603}
+    - target: {fileID: 7363715940889774426, guid: 13ec7ff7dd226d349b657989439aa3f5,
+        type: 3}
+      propertyPath: 'allRespawnPoints.Array.data[13]'
+      value: 
+      objectReference: {fileID: 1061589005}
+    - target: {fileID: 7363715940889774426, guid: 13ec7ff7dd226d349b657989439aa3f5,
+        type: 3}
+      propertyPath: 'allRespawnPoints.Array.data[14]'
+      value: 
+      objectReference: {fileID: 1246113173}
+    - target: {fileID: 7363715940889774426, guid: 13ec7ff7dd226d349b657989439aa3f5,
+        type: 3}
+      propertyPath: 'allRespawnPoints.Array.data[15]'
+      value: 
+      objectReference: {fileID: 1397369231}
+    - target: {fileID: 7363715940889774426, guid: 13ec7ff7dd226d349b657989439aa3f5,
+        type: 3}
+      propertyPath: 'allRespawnPoints.Array.data[16]'
+      value: 
+      objectReference: {fileID: 1052196284}
+    - target: {fileID: 7363715940889774426, guid: 13ec7ff7dd226d349b657989439aa3f5,
+        type: 3}
+      propertyPath: 'allRespawnPoints.Array.data[17]'
+      value: 
+      objectReference: {fileID: 1292549515}
+    - target: {fileID: 7363715940889774426, guid: 13ec7ff7dd226d349b657989439aa3f5,
+        type: 3}
+      propertyPath: 'allRespawnPoints.Array.data[18]'
+      value: 
+      objectReference: {fileID: 1379361190}
+    - target: {fileID: 7363715940889774426, guid: 13ec7ff7dd226d349b657989439aa3f5,
+        type: 3}
+      propertyPath: 'allRespawnPoints.Array.data[19]'
+      value: 
+      objectReference: {fileID: 2111113081}
+    - target: {fileID: 7363715940889774426, guid: 13ec7ff7dd226d349b657989439aa3f5,
+        type: 3}
+      propertyPath: 'allRespawnPoints.Array.data[20]'
+      value: 
+      objectReference: {fileID: 856341078}
+    - target: {fileID: 7363715940889774426, guid: 13ec7ff7dd226d349b657989439aa3f5,
+        type: 3}
+      propertyPath: 'allRespawnPoints.Array.data[21]'
+      value: 
+      objectReference: {fileID: 264375310}
+    - target: {fileID: 7363715940889774426, guid: 13ec7ff7dd226d349b657989439aa3f5,
+        type: 3}
+      propertyPath: 'allRespawnPoints.Array.data[22]'
+      value: 
+      objectReference: {fileID: 1990929620}
+    - target: {fileID: 7363715940889774426, guid: 13ec7ff7dd226d349b657989439aa3f5,
+        type: 3}
+      propertyPath: 'allRespawnPoints.Array.data[23]'
+      value: 
+      objectReference: {fileID: 1522698871}
+    - target: {fileID: 7363715940889774426, guid: 13ec7ff7dd226d349b657989439aa3f5,
+        type: 3}
+      propertyPath: 'allRespawnPoints.Array.data[24]'
+      value: 
+      objectReference: {fileID: 1655426036}
+    - target: {fileID: 7363715940889774426, guid: 13ec7ff7dd226d349b657989439aa3f5,
+        type: 3}
+      propertyPath: 'allRespawnPoints.Array.data[25]'
+      value: 
+      objectReference: {fileID: 1361385142}
+    - target: {fileID: 7363715940889774426, guid: 13ec7ff7dd226d349b657989439aa3f5,
+        type: 3}
+      propertyPath: 'allRespawnPoints.Array.data[26]'
+      value: 
+      objectReference: {fileID: 105201686}
+    - target: {fileID: 7363715940889774426, guid: 13ec7ff7dd226d349b657989439aa3f5,
+        type: 3}
+      propertyPath: 'allRespawnPoints.Array.data[27]'
+      value: 
+      objectReference: {fileID: 1811240970}
+    - target: {fileID: 7363715940889774426, guid: 13ec7ff7dd226d349b657989439aa3f5,
+        type: 3}
+      propertyPath: 'allRespawnPoints.Array.data[28]'
+      value: 
+      objectReference: {fileID: 62356685}
+    - target: {fileID: 7363715940889774426, guid: 13ec7ff7dd226d349b657989439aa3f5,
+        type: 3}
+      propertyPath: 'allRespawnPoints.Array.data[29]'
+      value: 
+      objectReference: {fileID: 2062105241}
+    - target: {fileID: 7363715940889774426, guid: 13ec7ff7dd226d349b657989439aa3f5,
+        type: 3}
+      propertyPath: 'allRespawnPoints.Array.data[30]'
+      value: 
+      objectReference: {fileID: 184265098}
+    - target: {fileID: 7363715940889774426, guid: 13ec7ff7dd226d349b657989439aa3f5,
+        type: 3}
+      propertyPath: 'allRespawnPoints.Array.data[31]'
+      value: 
+      objectReference: {fileID: 1144899308}
+    - target: {fileID: 7363715940889774426, guid: 13ec7ff7dd226d349b657989439aa3f5,
+        type: 3}
+      propertyPath: 'allRespawnPoints.Array.data[32]'
+      value: 
+      objectReference: {fileID: 648452181}
+    - target: {fileID: 7363715940889774426, guid: 13ec7ff7dd226d349b657989439aa3f5,
+        type: 3}
+      propertyPath: 'allRespawnPoints.Array.data[33]'
+      value: 
+      objectReference: {fileID: 1728253153}
+    - target: {fileID: 7363715940889774426, guid: 13ec7ff7dd226d349b657989439aa3f5,
+        type: 3}
+      propertyPath: 'allRespawnPoints.Array.data[34]'
+      value: 
+      objectReference: {fileID: 1831005726}
+    - target: {fileID: 7363715940889774426, guid: 13ec7ff7dd226d349b657989439aa3f5,
+        type: 3}
+      propertyPath: 'allRespawnPoints.Array.data[35]'
+      value: 
+      objectReference: {fileID: 2112090969}
+    - target: {fileID: 7363715940889774426, guid: 13ec7ff7dd226d349b657989439aa3f5,
+        type: 3}
+      propertyPath: 'allRespawnPoints.Array.data[36]'
+      value: 
+      objectReference: {fileID: 1283570857}
+    - target: {fileID: 7363715940889774426, guid: 13ec7ff7dd226d349b657989439aa3f5,
+        type: 3}
+      propertyPath: 'allRespawnPoints.Array.data[37]'
+      value: 
+      objectReference: {fileID: 1397439502}
+    - target: {fileID: 7363715940889774426, guid: 13ec7ff7dd226d349b657989439aa3f5,
+        type: 3}
+      propertyPath: 'allRespawnPoints.Array.data[38]'
+      value: 
+      objectReference: {fileID: 1422426923}
+    - target: {fileID: 7363715940889774426, guid: 13ec7ff7dd226d349b657989439aa3f5,
+        type: 3}
+      propertyPath: 'allRespawnPoints.Array.data[39]'
+      value: 
+      objectReference: {fileID: 1882729830}
+    - target: {fileID: 7363715940889774426, guid: 13ec7ff7dd226d349b657989439aa3f5,
+        type: 3}
+      propertyPath: 'allRespawnPoints.Array.data[40]'
+      value: 
+      objectReference: {fileID: 1432967044}
+    - target: {fileID: 7363715940889774426, guid: 13ec7ff7dd226d349b657989439aa3f5,
+        type: 3}
+      propertyPath: 'allRespawnPoints.Array.data[41]'
+      value: 
+      objectReference: {fileID: 1632422160}
+    - target: {fileID: 7363715940889774426, guid: 13ec7ff7dd226d349b657989439aa3f5,
+        type: 3}
+      propertyPath: 'allRespawnPoints.Array.data[42]'
+      value: 
+      objectReference: {fileID: 778018654}
     - target: {fileID: 8519776757623130593, guid: 13ec7ff7dd226d349b657989439aa3f5,
         type: 3}
       propertyPath: pausePanel
@@ -10461,6 +10723,43 @@ Transform:
   m_Children: []
   m_Father: {fileID: 739440972}
   m_LocalEulerAnglesHint: {x: -17.969, y: 61.183, z: 39.577}
+--- !u!84 &1583007431
+RenderTexture:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: 
+  m_ImageContentsHash:
+    serializedVersion: 2
+    Hash: 00000000000000000000000000000000
+  m_IsAlphaChannelOptional: 0
+  serializedVersion: 6
+  m_Width: 257
+  m_Height: 257
+  m_AntiAliasing: 1
+  m_MipCount: -1
+  m_DepthStencilFormat: 94
+  m_ColorFormat: 4
+  m_MipMap: 0
+  m_GenerateMips: 1
+  m_SRGB: 1
+  m_UseDynamicScale: 0
+  m_UseDynamicScaleExplicit: 0
+  m_BindMS: 0
+  m_EnableCompatibleFormat: 1
+  m_EnableRandomWrite: 0
+  m_TextureSettings:
+    serializedVersion: 2
+    m_FilterMode: 1
+    m_Aniso: 1
+    m_MipBias: 0
+    m_WrapU: 1
+    m_WrapV: 1
+    m_WrapW: 1
+  m_Dimension: 2
+  m_VolumeDepth: 1
+  m_ShadowSamplingMode: 2
 --- !u!1 &1586495864
 GameObject:
   m_ObjectHideFlags: 0
@@ -12934,7 +13233,7 @@ PrefabInstance:
     - target: {fileID: 4235253975873939114, guid: c48226e17d8156442b38a0582184ad5e,
         type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -0.000002861
+      value: -0.00003337858
       objectReference: {fileID: 0}
     - target: {fileID: 4480569711736069215, guid: c48226e17d8156442b38a0582184ad5e,
         type: 3}

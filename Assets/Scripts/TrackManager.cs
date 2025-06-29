@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Linq; 
 
 public class TrackManager : MonoBehaviour
 {
@@ -6,13 +7,13 @@ public class TrackManager : MonoBehaviour
 
     private TrackWaypointContainer currentWaypointContainer;
     [SerializeField] private Transform defaultFallbackRespawnPoint;
+    public Transform[] allRespawnPoints; 
 
     void Awake()
     {
         if (Instance == null)
         {
             Instance = this;
-            DontDestroyOnLoad(gameObject);
             Debug.Log("TrackManager: Instancja utworzona i ustawiona.", this);
         }
         else
@@ -33,12 +34,16 @@ public class TrackManager : MonoBehaviour
 
     public Transform GetNearestRespawnPoint(Vector3 referencePosition)
     {
-        if (currentWaypointContainer != null)
+        Transform bestPoint = null;
+
+        if (currentWaypointContainer != null && 
+            currentWaypointContainer.respawnPoints != null && 
+            currentWaypointContainer.respawnPoints.Length > 0)
         {
-            Transform point = currentWaypointContainer.GetNearestPoint(referencePosition);
-            if (point != null)
+            bestPoint = currentWaypointContainer.GetNearestPoint(referencePosition);
+            if (bestPoint != null)
             {
-                return point;
+                return bestPoint ;
             }
             else
             {
@@ -48,6 +53,34 @@ public class TrackManager : MonoBehaviour
         else
         {
             Debug.LogWarning("TrackManager: currentWaypointContainer jest NULL! Upewnij się, że samochód wjechał w TrackChecker, który ustawił kontener punktów respawnu. Używam fallback point, jeśli jest dostępny.", this);
+        }
+
+        if (allRespawnPoints != null && allRespawnPoints.Length > 0)
+        {
+            float minDist = float.MaxValue;
+            Transform nearestGlobal = null;
+
+            foreach (var point in allRespawnPoints)
+            {
+                if (point == null) continue;
+
+                float dist = Vector3.Distance(referencePosition, point.position);
+                if (dist < minDist)
+                {
+                    minDist = dist;
+                    nearestGlobal = point;
+                }
+            }
+
+            if (nearestGlobal != null)
+            {
+                Debug.Log("TrackManager: Znaleziono najbliższy punkt z globalnej listy.", this);
+                return nearestGlobal;
+            }
+            else
+            {
+                Debug.LogWarning("TrackManager: Globalna lista punktów respawnu jest pusta lub zawiera same NULL-e!", this);
+            }
         }
 
         if (defaultFallbackRespawnPoint != null)
