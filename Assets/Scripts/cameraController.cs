@@ -15,7 +15,6 @@ public class cameraController : MonoBehaviour
     [SerializeField] private int inactiveCameraPriority = 10;
 
 
-    // Publiczna metoda do przypisania pojazdu z GameManagera
     public void AssignCameraToVehicle(GameObject vehicle)
     {
         attachedVehicle = vehicle;
