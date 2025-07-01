@@ -6,61 +6,82 @@ using Unity.Cinemachine;
 public class cameraController : MonoBehaviour
 {
     private GameObject attachedVehicle;
-    private CinemachineVirtualCamera virtualCam;
 
-    private GameObject cameraPositionFolder;
-    private Transform[] camLocations;
+    public CinemachineVirtualCamera[] virtualCameras; 
 
-    public int locationIndicator = 2;
+    public int locationIndicator = 0;
+
+    [SerializeField] private int activeCameraPriority = 20;
+    [SerializeField] private int inactiveCameraPriority = 10;
+
 
     // Publiczna metoda do przypisania pojazdu z GameManagera
     public void AssignCameraToVehicle(GameObject vehicle)
     {
         attachedVehicle = vehicle;
-        virtualCam = attachedVehicle.GetComponentInChildren<CinemachineVirtualCamera>();
 
-        if (attachedVehicle.transform.Find("CAMERA") == null)
+        Transform virtualCamerasContainer = attachedVehicle.transform.Find("VirtualCameras");
+
+
+        if (virtualCamerasContainer == null)
         {
-            Debug.LogError("CAMERA folder nie znaleziony w pojeÅºdzie!");
+            Debug.LogError("cameraController: Object 'VirtualCameras' not found as a child of vehicle '" + attachedVehicle.name + "'!");
             return;
         }
 
-        cameraPositionFolder = attachedVehicle.transform.Find("CAMERA").gameObject;
-        camLocations = cameraPositionFolder.GetComponentsInChildren<Transform>();
+        virtualCameras = virtualCamerasContainer.GetComponentsInChildren<CinemachineVirtualCamera>();
 
-        if (virtualCam != null)
+        if (virtualCameras.Length == 0)
         {
-            Debug.Log("Virtual Camera found: " + virtualCam.name);
-            virtualCam.Priority = 20;
-            virtualCam.Follow = camLocations[locationIndicator];
-            virtualCam.LookAt = camLocations[1];
+            Debug.LogError("cameraController: Brak Cinemachine Virtual Cameras znalezionych w obiekcie '" + virtualCamerasContainer.name + "'. Upewnij się, że są tam umieszczone.");
+            return;
+        }
 
-            Debug.Log("Camera locations initialized. Current Follow: " + camLocations[locationIndicator].name);
+        Debug.Log("cameraController: Found " + virtualCameras.Length + " Virtual Cameras for vehicle '" + attachedVehicle.name + "'.");
+        foreach(var cam in virtualCameras)
+        {
+            Debug.Log("- " + cam.name);
+        }
+
+        locationIndicator = Mathf.Clamp(locationIndicator, 0, virtualCameras.Length - 1);
+        SwitchCamera(locationIndicator);
+    }
+
+    private void SwitchCamera(int newIndex)
+    {
+        if (newIndex < 0 || newIndex >= virtualCameras.Length)
+        {
+            Debug.LogWarning("cameraController: Index of camera out of scope: " + newIndex);
+            return;
+        }
+
+        foreach (var cam in virtualCameras)
+        {
+            if (cam != null)
+            {
+                cam.Priority = inactiveCameraPriority;
+            }
+        }
+
+        if (virtualCameras[newIndex] != null)
+        {
+            virtualCameras[newIndex].Priority = activeCameraPriority;
+            Debug.Log("Switched to camera: " + virtualCameras[newIndex].name + " at index: " + newIndex);
         }
         else
         {
-            Debug.LogError("No Virtual Camera found in the attached vehicle.");
+            Debug.LogError("cameraController: Camera with index " + newIndex + " is NULL!");
         }
     }
 
     private void Update()
     {
-        if (attachedVehicle == null || virtualCam == null || camLocations == null) return;
+        if (virtualCameras == null || virtualCameras.Length == 0) return;
 
         if (Input.GetKeyDown(KeyCode.Tab))
         {
-            if (locationIndicator >= 4 || locationIndicator < 2)
-            {
-                locationIndicator = 2;
-                Debug.Log("Location Indicator: " + locationIndicator + " camlocations: " + camLocations[locationIndicator].name);
-            }
-            else
-            {
-                locationIndicator++;
-                Debug.Log("else Location Indicator: " + locationIndicator);
-            }
-
-            virtualCam.Follow = camLocations[locationIndicator];
+            locationIndicator = (locationIndicator + 1) % virtualCameras.Length; 
+            SwitchCamera(locationIndicator);
         }
     }
 }
