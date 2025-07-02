@@ -22,6 +22,17 @@ public class CarController : MonoBehaviour
     public float minVolume = 0.2f;
     public float maxVolume = 1.0f;
 
+
+    //HEALTH
+    public GameObject gameOverPanel;
+
+    public HealthUI healthUI;
+    [Header("Health")]
+    public int maxHealth = 100;
+    private int currentHealth;
+
+
+
     private AudioSource engineAudioSource; 
     private Rigidbody carRigidbody;
 
@@ -193,6 +204,13 @@ public class CarController : MonoBehaviour
             }
         }
 
+        currentHealth = maxHealth;
+        UpdateHealthUI();
+        if (healthUI == null)
+            healthUI = FindObjectOfType<HealthUI>();
+
+        if (gameOverPanel == null)
+            gameOverPanel = GameObject.Find("GameOverPanel");
         cameraOrbit = FindObjectOfType<CameraOrbit>();
 
         if (engineSoundClip != null)
@@ -432,6 +450,73 @@ public class CarController : MonoBehaviour
             {
                 UIManager.Instance.ShowTemporaryMessage("", false);
             }
+        }
+    }
+    private void UpdateHealthUI()
+    {
+        if (healthUI != null)
+        {
+            healthUI.UpdateHP(currentHealth, maxHealth);
+        }
+    }
+    public void TakeDamage(int amount)
+    {
+        currentHealth -= amount;
+        currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth);
+        UpdateHealthUI();
+
+        if (currentHealth <= 0)
+        {
+            Die();
+        }
+    }
+
+    public void Heal(int amount)
+    {
+        currentHealth += amount;
+        currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth);
+        UpdateHealthUI();
+    }
+
+    private void Die()
+    {
+        Debug.Log("Player Died");
+
+        if (gameOverPanel != null)
+        {
+            gameOverPanel.SetActive(true);
+        }
+
+        
+        if (carRigidbody != null)
+        {
+            carRigidbody.linearVelocity = Vector3.zero;
+            carRigidbody.angularVelocity = Vector3.zero;
+            carRigidbody.isKinematic = true;
+        }
+
+        
+        this.enabled = false;
+
+        
+        if (engineAudioSource != null)
+        {
+            engineAudioSource.Stop();
+        }
+
+        
+        if (UIManager.Instance != null)
+        {
+            UIManager.Instance.ShowTemporaryMessage("Game Over", true);
+        }
+    }
+    private void OnCollisionEnter(Collision collision)
+    {
+        
+        if (collision.gameObject.CompareTag("AI"))
+        {
+            
+            TakeDamage(10);
         }
     }
 }
