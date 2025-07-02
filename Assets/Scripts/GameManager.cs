@@ -87,6 +87,7 @@ public class GameManager : MonoBehaviour
                 spawnRotation);
 
             playerCarInstance.name = "PlayerCar";
+
             Position positionScript = FindObjectOfType<Position>();
             if (positionScript != null)
             {
@@ -95,6 +96,12 @@ public class GameManager : MonoBehaviour
                     positionScript.allCars = new List<Transform>();
                 }
                 positionScript.allCars.Add(playerCarInstance.transform);
+            }
+
+            var cameraController = FindObjectOfType<cameraController>();
+            if (cameraController != null)
+            {
+                cameraController.AssignCameraToVehicle(playerCarInstance);
             }
 
         }
