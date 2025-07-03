@@ -13,7 +13,7 @@ public class HealthUI : MonoBehaviour
 
     public void UpdateHP(float current, float max)
     {
-        hpText.text = "HP: " + Mathf.RoundToInt(current);
+        hpText.text = Mathf.RoundToInt(current) + "%";
 
         float percent = current / max;
         hpFillImage.fillAmount = percent;
