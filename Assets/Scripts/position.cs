@@ -1,8 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using TMPro;
-using System.Linq;
 
 public class Position : MonoBehaviour
 {
@@ -12,75 +12,84 @@ public class Position : MonoBehaviour
 
     void Update()
     {
+        // podstawowe weryfikacje
         if (allCars == null || allCars.Count == 0) return;
         if (positionTexts == null || positionTexts.Length == 0) return;
         if (waypoints == null || waypoints.Count == 0) return;
+        if (RaceManager.Instance == null) return;
 
-        allCars = allCars.Where(car => car != null).ToList();
+        // usuwamy z listy nullowe pozycje
+        allCars = allCars.Where(c => c != null).ToList();
 
-        foreach (Transform car in allCars)
+        // najpierw obliczamy postêp (closest waypoint) wszystkich wci¹¿ œcigaj¹cych siê
+        foreach (var car in allCars)
         {
-            CarProgress progress = car.GetComponent<CarProgress>();
-            if (progress != null)
+            var prog = car.GetComponent<CarProgress>();
+            if (prog == null) continue;
+
+            float minDist = float.MaxValue;
+            int closest = 0;
+            for (int i = 0; i < waypoints.Count; i++)
             {
-                // ZnajdŸ najbli¿szy waypoint
-                float minDist = float.MaxValue;
-                int closestIndex = 0;
-
-                for (int i = 0; i < waypoints.Count; i++)
+                float d = Vector3.Distance(car.position, waypoints[i].position);
+                if (d < minDist)
                 {
-                    float dist = Vector3.Distance(car.position, waypoints[i].position);
-                    if (dist < minDist)
-                    {
-                        minDist = dist;
-                        closestIndex = i;
-                    }
+                    minDist = d;
+                    closest = i;
                 }
-
-                progress.currentWaypointIndex = closestIndex;
             }
+            prog.currentWaypointIndex = closest;
         }
 
+        // rozdzielamy listê na finished i racing
+        var finishedNames = RaceManager.Instance.finishOrder
+            .Select(fr => fr.racerName).ToList();
 
-        // Sortowanie — najpierw po numerze waypointu, potem po odleg³oœci do tego waypointa
-        allCars.Sort((a, b) =>
+        var finishedCars = new List<Transform>();
+        var racingCars = new List<Transform>();
+        foreach (var car in allCars)
         {
-            if (a == null)
-            {
-                Debug.LogWarning(a.name + "jest nullem");
-            }
-            if (b == null)
-            {
-                Debug.LogWarning(b.name + "jest nullem");
-            }
-            var aProg = a.GetComponent<CarProgress>();
-            var bProg = b.GetComponent<CarProgress>();
+            if (finishedNames.Contains(car.name))
+                finishedCars.Add(car);
+            else
+                racingCars.Add(car);
+        }
 
-            int cmp = bProg.currentWaypointIndex.CompareTo(aProg.currentWaypointIndex);
+        // 1) Sortujemy finishedCars wed³ug kolejnoœci w finishOrder
+        finishedCars = finishedCars
+            .OrderBy(c => finishedNames.IndexOf(c.name))
+            .ToList();
+
+        // 2) Sortujemy racingCars po waypoint + odleg³oœæ
+        racingCars.Sort((a, b) =>
+        {
+            var pa = a.GetComponent<CarProgress>();
+            var pb = b.GetComponent<CarProgress>();
+
+            int cmp = pb.currentWaypointIndex.CompareTo(pa.currentWaypointIndex);
             if (cmp != 0) return cmp;
 
-            // Jeœli ten sam waypoint — kto bli¿ej nastêpnego
-            float distA = Vector3.Distance(a.position, waypoints[aProg.currentWaypointIndex].position);
-            float distB = Vector3.Distance(b.position, waypoints[bProg.currentWaypointIndex].position);
-            return distA.CompareTo(distB);
+            float da = Vector3.Distance(a.position, waypoints[pa.currentWaypointIndex].position);
+            float db = Vector3.Distance(b.position, waypoints[pb.currentWaypointIndex].position);
+            return da.CompareTo(db);
         });
 
-        // Wyœwietlenie pozycji
-        int count = Mathf.Min(positionTexts.Length, allCars.Count);
+        // 3) Sklejamy w jedn¹ listê
+        var finalOrder = finishedCars.Concat(racingCars).ToList();
+
+        // 4) Wyœwietlamy w UI
+        int count = Mathf.Min(positionTexts.Length, finalOrder.Count);
         for (int i = 0; i < count; i++)
         {
-            if (allCars[i] == null) continue;
+            var car = finalOrder[i];
+            if (car == null) continue;
 
-            string carName = allCars[i].name;
-
-            if (carName.StartsWith("Player"))
-            {
-                positionTexts[i].text = $"{i + 1}. <u><color=red>{carName}</color></u>";
-            }
+            string name = car.name;
+            if (name.StartsWith("Player"))
+                positionTexts[i].text = $"{i + 1}. <u><color=red>{name}</color></u>";
             else
-            {
-                positionTexts[i].text = $"{i + 1}. {carName}";
-            }
+                positionTexts[i].text = $"{i + 1}. {name}";
         }
     }
 }
+
