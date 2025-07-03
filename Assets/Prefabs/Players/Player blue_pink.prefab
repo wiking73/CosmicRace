@@ -257,7 +257,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c9460bd27da428d4cb6e1cd25a3ebc4b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  vehicleName: BluePink
+  vehicleName: Cosmic Dash
   mass: 1310
   acceleration: 3
   topSpeed: 170

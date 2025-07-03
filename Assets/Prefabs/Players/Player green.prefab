@@ -86,7 +86,7 @@ PrefabInstance:
     - target: {fileID: 4188502460152512813, guid: 3507a04562c316643b5eaa32755b5ef9,
         type: 3}
       propertyPath: vehicleName
-      value: Green
+      value: Forest Fury
       objectReference: {fileID: 0}
     - target: {fileID: 4188502460152512813, guid: 3507a04562c316643b5eaa32755b5ef9,
         type: 3}
