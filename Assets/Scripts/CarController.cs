@@ -158,7 +158,7 @@ public class CarController : MonoBehaviour
     {
         float currentSpeed = carRigidbody.linearVelocity.magnitude * 3.6f;
 
-        Debug.LogWarning("Current speed" +  currentSpeed);
+        // Debug.LogWarning("Current speed" +  currentSpeed);
 
         if (vehicleStats != null && currentSpeed < vehicleStats.topSpeed)
         {
