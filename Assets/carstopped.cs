@@ -5,12 +5,14 @@ public class carstopped : MonoBehaviour
     public float freezeDuration = 2f;
     public GameObject trapEffect;
     public AudioClip trapSound;
+    public int damageAmount = 10;
 
     private void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("Player"))
         {
             CarController car = other.GetComponent<CarController>();
+            car.TakeDamage(damageAmount);
             if (car != null)
             {
                 if (trapEffect)

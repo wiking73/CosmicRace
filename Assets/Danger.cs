@@ -8,6 +8,7 @@ public class Danger : MonoBehaviour
     public float flipForce = 5f;
     public float torqueForce = 3f;
     public float liftAmount = 2f;
+    public int damageAmount = 10;
 
     private void OnTriggerEnter(Collider other)
     {
@@ -19,28 +20,30 @@ public class Danger : MonoBehaviour
             if (effectOnHit)
                 Instantiate(effectOnHit, transform.position, Quaternion.identity);
 
-            Rigidbody rb = other.GetComponent<Rigidbody>();
-            if (rb != null)
+            CarController car = other.GetComponent<CarController>();
+            if (car != null)
             {
-                Debug.Log("Car flipped!");
-
-               
-                rb.linearVelocity = Vector3.zero;
-                rb.angularVelocity = Vector3.zero;
-
                 
-                other.transform.position += Vector3.up * liftAmount;
+                car.TakeDamage(damageAmount);
 
+                Rigidbody rb = other.GetComponent<Rigidbody>();
 
-                Vector3 rot = other.transform.eulerAngles;
-                rot.z = (rot.z + 180f) % 360f; 
-                other.transform.eulerAngles = rot;
+                Debug.Log("Car flipped and damaged!");
 
-              
+                if (rb != null)
+                {
+                    rb.linearVelocity = Vector3.zero;
+                    rb.angularVelocity = Vector3.zero;
 
-                
-                rb.AddForce(Vector3.up * flipForce, ForceMode.Impulse);
-                rb.AddTorque(Vector3.right * torqueForce, ForceMode.Impulse);
+                    other.transform.position += Vector3.up * liftAmount;
+
+                    Vector3 rot = other.transform.eulerAngles;
+                    rot.z = (rot.z + 180f) % 360f;
+                    other.transform.eulerAngles = rot;
+
+                    rb.AddForce(Vector3.up * flipForce, ForceMode.Impulse);
+                    rb.AddTorque(Vector3.right * torqueForce, ForceMode.Impulse);
+                }
             }
 
             Destroy(gameObject);

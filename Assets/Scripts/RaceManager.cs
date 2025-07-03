@@ -80,18 +80,18 @@ public class RaceManager : MonoBehaviour
             playerPosition = activeRacers.FindIndex(r => r == GameManager.Instance.playerCarInstance.transform) + 1;
         }
 
-        if (positionText != null)
-        {
-            if (playerPosition != -1)
-            {
-                positionText.text = "Position: " + playerPosition + " / " + activeRacers.Count;
-            }
-            else
-            {
-                positionText.text = "Position: N/A";
-            }
-        }
-        positionText.text = "";
+        //if (positionText != null)
+        //{
+        //    if (playerPosition != -1)
+        //    {
+        //        positionText.text = "Position: " + playerPosition + " / " + activeRacers.Count;
+        //    }
+        //    else
+        //    {
+        //        positionText.text = "Position: N/A";
+        //    }
+        //}
+        //positionText.text = "";
     }
 
     public void FinishRace(GameObject racer)
