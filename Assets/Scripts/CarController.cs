@@ -116,7 +116,9 @@ public class CarController : MonoBehaviour
         
         if (UIManager.Instance != null)
         {
-            UIManager.Instance.ShowFlipCarPrompt(IsCarFlipped());
+            bool isFlipped = IsCarFlipped();
+            UIManager.Instance.ShowFlipCarPrompt(isFlipped);
+            UIManager.Instance.ShowCustomPanel(isFlipped);
         }
 
         UpdateSpeedDisplay();
@@ -282,6 +284,7 @@ public class CarController : MonoBehaviour
         }
         if (UIManager.Instance != null)
         {
+            UIManager.Instance.ShowCustomPanel(false);
             UIManager.Instance.ShowFlipCarPrompt(false);
         }
     }
@@ -313,6 +316,7 @@ public class CarController : MonoBehaviour
 
         if (UIManager.Instance != null)
         {
+            UIManager.Instance.ShowCustomPanel(false);
             UIManager.Instance.ShowFlipCarPrompt(false);
         }
     }

@@ -21,7 +21,7 @@ public class Position : MonoBehaviour
         // usuwamy z listy nullowe pozycje
         allCars = allCars.Where(c => c != null).ToList();
 
-        // najpierw obliczamy postêp (closest waypoint) wszystkich wci¹¿ œcigaj¹cych siê
+        // najpierw obliczamy postï¿½p (closest waypoint) wszystkich wciï¿½ï¿½ ï¿½cigajï¿½cych siï¿½
         foreach (var car in allCars)
         {
             var prog = car.GetComponent<CarProgress>();
@@ -41,7 +41,7 @@ public class Position : MonoBehaviour
             prog.currentWaypointIndex = closest;
         }
 
-        // rozdzielamy listê na finished i racing
+        // rozdzielamy listï¿½ na finished i racing
         var finishedNames = RaceManager.Instance.finishOrder
             .Select(fr => fr.racerName).ToList();
 
@@ -55,12 +55,12 @@ public class Position : MonoBehaviour
                 racingCars.Add(car);
         }
 
-        // 1) Sortujemy finishedCars wed³ug kolejnoœci w finishOrder
+        // 1) Sortujemy finishedCars wedï¿½ug kolejnoï¿½ci w finishOrder
         finishedCars = finishedCars
             .OrderBy(c => finishedNames.IndexOf(c.name))
             .ToList();
 
-        // 2) Sortujemy racingCars po waypoint + odleg³oœæ
+        // 2) Sortujemy racingCars po waypoint + odlegï¿½oï¿½ï¿½
         racingCars.Sort((a, b) =>
         {
             var pa = a.GetComponent<CarProgress>();
@@ -74,10 +74,10 @@ public class Position : MonoBehaviour
             return da.CompareTo(db);
         });
 
-        // 3) Sklejamy w jedn¹ listê
+        // 3) Sklejamy w jednï¿½ listï¿½
         var finalOrder = finishedCars.Concat(racingCars).ToList();
 
-        // 4) Wyœwietlamy w UI
+        // 4) Wyï¿½wietlamy w UI
         int count = Mathf.Min(positionTexts.Length, finalOrder.Count);
         for (int i = 0; i < count; i++)
         {
@@ -86,7 +86,7 @@ public class Position : MonoBehaviour
 
             string name = car.name;
             if (name.StartsWith("Player"))
-                positionTexts[i].text = $"{i + 1}. <u><color=red>{name}</color></u>";
+                positionTexts[i].text = $"{i + 1}. <color=#7CC3D3><b>{name}</b></color>";
             else
                 positionTexts[i].text = $"{i + 1}. {name}";
         }
