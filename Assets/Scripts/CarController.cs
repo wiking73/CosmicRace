@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using TMPro;
+using UnityEngine.UI;
 
 
 public class CarController : MonoBehaviour
@@ -25,7 +26,6 @@ public class CarController : MonoBehaviour
 
 
     //HEALTH
-    public GameObject gameOverPanel;
 
     public HealthUI healthUI;
     [Header("Health")]
@@ -65,6 +65,8 @@ public class CarController : MonoBehaviour
     private CameraOrbit cameraOrbit;
 
     private VehicleStats vehicleStats;
+
+   
 
 
     private void FixedUpdate()
@@ -242,8 +244,6 @@ public class CarController : MonoBehaviour
         if (healthUI == null)
             healthUI = FindObjectOfType<HealthUI>();
 
-        if (gameOverPanel == null)
-            gameOverPanel = GameObject.Find("GameOverPanel");
         cameraOrbit = FindObjectOfType<CameraOrbit>();
 
         if (engineSoundClip != null)
@@ -527,16 +527,13 @@ public class CarController : MonoBehaviour
         UpdateHealthUI();
     }
 
+
     private void Die()
     {
-        Debug.Log("Player Died");
 
-        if (gameOverPanel != null)
-        {
-            gameOverPanel.SetActive(true);
-        }
+        RaceManager.Instance.GameOver();
 
-        
+
         if (carRigidbody != null)
         {
             carRigidbody.linearVelocity = Vector3.zero;
