@@ -8,6 +8,7 @@ using TMPro;
 
 public class CarController : MonoBehaviour
 {
+
     [Header("General")]
     private float horizontalInput, verticalInput;
     private float currentSteerAngle, currentbreakForce;
@@ -63,6 +64,8 @@ public class CarController : MonoBehaviour
 
     private CameraOrbit cameraOrbit;
 
+    private VehicleStats vehicleStats;
+
 
     private void FixedUpdate()
     {
@@ -76,7 +79,22 @@ public class CarController : MonoBehaviour
         HandleSteering();
         UpdateWheels();
         UpdateEngineSound();
+
+        vehicleStats = GetComponent<VehicleStats>();
+
+        if (verticalInput > 0)
+        {
+            ApplyAccelerationForce(vehicleStats.acceleration); // albo vehicleStats.acceleration
+        }
+
     }
+
+    void ApplyAccelerationForce(float desiredAcceleration)
+    {
+        float force = carRigidbody.mass * desiredAcceleration;
+        carRigidbody.AddForce(transform.forward * force);
+    }
+
     private bool IsCarFlipped()
     {
         float angle = Vector3.Angle(transform.up, Vector3.up);
@@ -134,8 +152,21 @@ public class CarController : MonoBehaviour
 
     private void HandleMotor()
     {
-        frontLeftWheelCollider.motorTorque = verticalInput * motorForce;
-        frontRightWheelCollider.motorTorque = verticalInput * motorForce;
+        float currentSpeed = carRigidbody.linearVelocity.magnitude * 3.6f;
+
+        Debug.LogWarning("Current speed" +  currentSpeed);
+
+        if (vehicleStats != null && currentSpeed < vehicleStats.topSpeed)
+        {
+            frontLeftWheelCollider.motorTorque = verticalInput * motorForce;
+            frontRightWheelCollider.motorTorque = verticalInput * motorForce;
+        }
+        else
+        {
+            frontLeftWheelCollider.motorTorque = 0;
+            frontRightWheelCollider.motorTorque = 0;
+        }
+
         currentbreakForce = isBreaking ? breakForce : 0f;
         ApplyBreaking();
     }
@@ -225,6 +256,20 @@ public class CarController : MonoBehaviour
         else
         {
             Debug.LogError("CarController: SFXManager.Instance is null. Cannot register engine audio source.", this);
+        }
+
+        carRigidbody = GetComponent<Rigidbody>();
+        engineAudioSource = GetComponent<AudioSource>();
+
+        vehicleStats = GetComponent<VehicleStats>();
+        if (vehicleStats != null)
+        {
+            motorForce = vehicleStats.acceleration * 300f; // np. skalowanie przyspieszenia na motorForce
+            Debug.LogWarning("Motot force: " + motorForce);
+        }
+        else
+        {
+            Debug.LogError("Brak VehicleStats na pojeździe: " + gameObject.name);
         }
 
     }
@@ -516,7 +561,7 @@ public class CarController : MonoBehaviour
         if (collision.gameObject.CompareTag("AI"))
         {
             
-            TakeDamage(30);
+            TakeDamage(20);
         }
     }
 }

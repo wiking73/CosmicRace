@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class Medkit : MonoBehaviour
 {
-    public int healAmount = 30;
+    public int healAmount = 20;
     public AudioClip healSound;
     public GameObject effectOnPickup;
 

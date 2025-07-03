@@ -210,6 +210,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: -2535468534411214650, guid: 3507a04562c316643b5eaa32755b5ef9, type: 3}
+    - {fileID: 4188502460152512813, guid: 3507a04562c316643b5eaa32755b5ef9, type: 3}
     m_RemovedGameObjects:
     - {fileID: 4277396054544165701, guid: 3507a04562c316643b5eaa32755b5ef9, type: 3}
     m_AddedGameObjects: []
@@ -218,6 +219,10 @@ PrefabInstance:
         type: 3}
       insertIndex: -1
       addedObject: {fileID: 4668805909587419869}
+    - targetCorrespondingSourceObject: {fileID: 2446948841429222077, guid: 3507a04562c316643b5eaa32755b5ef9,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 3047837493910912806}
   m_SourcePrefab: {fileID: 100100000, guid: 3507a04562c316643b5eaa32755b5ef9, type: 3}
 --- !u!1 &5868067272590446128 stripped
 GameObject:
@@ -238,3 +243,19 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   currentWaypointIndex: 0
+--- !u!114 &3047837493910912806
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5868067272590446128}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c9460bd27da428d4cb6e1cd25a3ebc4b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  vehicleName: Blue
+  mass: 1305
+  acceleration: 4
+  topSpeed: 150

@@ -73,6 +73,26 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 4188502460152512813, guid: 3507a04562c316643b5eaa32755b5ef9,
+        type: 3}
+      propertyPath: mass
+      value: 1295
+      objectReference: {fileID: 0}
+    - target: {fileID: 4188502460152512813, guid: 3507a04562c316643b5eaa32755b5ef9,
+        type: 3}
+      propertyPath: topSpeed
+      value: 120
+      objectReference: {fileID: 0}
+    - target: {fileID: 4188502460152512813, guid: 3507a04562c316643b5eaa32755b5ef9,
+        type: 3}
+      propertyPath: vehicleName
+      value: Green
+      objectReference: {fileID: 0}
+    - target: {fileID: 4188502460152512813, guid: 3507a04562c316643b5eaa32755b5ef9,
+        type: 3}
+      propertyPath: acceleration
+      value: 4
+      objectReference: {fileID: 0}
     - target: {fileID: 6647697239717083977, guid: 3507a04562c316643b5eaa32755b5ef9,
         type: 3}
       propertyPath: m_LocalRotation.w

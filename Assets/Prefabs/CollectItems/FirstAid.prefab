@@ -150,6 +150,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c59def9e72dfddc42a0c0957441bd382, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  healAmount: 30
+  healAmount: 20
   healSound: {fileID: 0}
   effectOnPickup: {fileID: 0}

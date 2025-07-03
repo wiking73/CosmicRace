@@ -154,7 +154,7 @@ MonoBehaviour:
   flipForce: 500
   torqueForce: 300
   liftAmount: 2
-  damageAmount: 30
+  damageAmount: 20
 --- !u!65 &2405836190994042894
 BoxCollider:
   m_ObjectHideFlags: 0

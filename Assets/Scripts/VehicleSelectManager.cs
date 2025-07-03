@@ -2,9 +2,14 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using TMPro;
 
 public class VehicleSelectManager : MonoBehaviour
 {
+    public TextMeshProUGUI vehicleNameText;
+    public TextMeshProUGUI massText;
+    public TextMeshProUGUI accelerationText;
+    public TextMeshProUGUI topSpeedText;
     public GameObject toRotate;
     public float rotateSpeed;
 
@@ -102,6 +107,23 @@ public class VehicleSelectManager : MonoBehaviour
         foreach (WheelCollider wc in wheelColliders)
         {
             wc.enabled = false;
+        }
+
+        VehicleStats stats = currentDisplayedVehicle.GetComponent<VehicleStats>();
+
+        if (stats != null)
+        {
+            vehicleNameText.text = "Name: " + stats.vehicleName;
+            massText.text = "Mass: " + stats.mass + " kg";
+            accelerationText.text = "Acceleration: " + stats.acceleration + " m/s2";
+            topSpeedText.text = "Max speed: " + stats.topSpeed + " km/h";
+        }
+        else
+        {
+            vehicleNameText.text = "No data";
+            massText.text = "";
+            accelerationText.text = "";
+            topSpeedText.text = "";
         }
     }
 

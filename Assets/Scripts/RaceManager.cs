@@ -21,7 +21,7 @@ public class RaceManager : MonoBehaviour
     public UnityEngine.UI.Text countdownText;
     public TimeCounter timeCounter;
     private bool raceFinished = false;
-    private List<FinishResult> finishOrder = new List<FinishResult>();
+    public List<FinishResult> finishOrder = new List<FinishResult>();
     public Position positionManager;
 
     private void Awake()
