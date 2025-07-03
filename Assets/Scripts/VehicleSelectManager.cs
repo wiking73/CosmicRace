@@ -115,7 +115,7 @@ public class VehicleSelectManager : MonoBehaviour
         {
             vehicleNameText.text = "Name: " + stats.vehicleName;
             massText.text = "Mass: " + stats.mass + " kg";
-            accelerationText.text = "Acceleration: " + stats.acceleration + " u/s";
+            accelerationText.text = "Acceleration: " + stats.acceleration + " m/s2";
             topSpeedText.text = "Max speed: " + stats.topSpeed + " km/h";
         }
         else

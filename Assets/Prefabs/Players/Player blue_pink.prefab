@@ -214,5 +214,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   vehicleName: BluePink
   mass: 1310
-  acceleration: 2
+  acceleration: 3
   topSpeed: 170

@@ -212,5 +212,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   vehicleName: BlackRed
   mass: 1310
-  acceleration: 4
+  acceleration: 5
   topSpeed: 160
