@@ -23,6 +23,8 @@ public class RaceManager : MonoBehaviour
     private bool raceFinished = false;
     public List<FinishResult> finishOrder = new List<FinishResult>();
     public Position positionManager;
+    public GameObject GameOverPanel;
+    public Text gameOverText;
 
     private void Awake()
     {
@@ -142,6 +144,17 @@ public class RaceManager : MonoBehaviour
 
                 resultText.text += $"{i + 1}. {result.racerName} (Time: {formattedTime})\n";
             }
+        }
+    }
+
+    public void GameOver()
+    {
+        Debug.Log("Player Died");
+
+        if (GameOverPanel != null)
+        {
+            GameOverPanel.SetActive(true);
+            gameOverText.text = "Game Over!";
         }
     }
 
