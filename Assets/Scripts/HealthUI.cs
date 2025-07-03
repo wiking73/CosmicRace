@@ -18,9 +18,9 @@ public class HealthUI : MonoBehaviour
         float percent = current / max;
         hpFillImage.fillAmount = percent;
 
-        if (percent > 0.6f)
+        if (percent > 0.65f)
             hpFillImage.color = highColor;
-        else if (percent > 0.3f)
+        else if (percent > 0.35f)
             hpFillImage.color = midColor;
         else
             hpFillImage.color = lowColor;
