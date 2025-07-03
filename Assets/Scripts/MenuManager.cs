@@ -7,6 +7,7 @@ public class MenuManager : MonoBehaviour
     public GameObject mainMenuPanel;
     public GameObject trackSelectPanel;
     public GameObject optionsPanel;
+    public GameObject instructionsPanel;
     public static string SelectedTrackSceneName = ""; 
 
     public void Play()
@@ -31,6 +32,17 @@ public class MenuManager : MonoBehaviour
             Debug.Log("MenuManager: Called SetupButtons for optionsPanel.");
         }
     }
+    public void Instructions()
+    {
+        mainMenuPanel.SetActive(false);
+        instructionsPanel.SetActive(true);
+
+        if (SFXManager.Instance != null)
+        {
+            SFXManager.Instance.SetupButtons();
+            Debug.Log("MenuManager: Called SetupButtons for optionsPanel.");
+        }
+    }
 
     public void Exit()
     {
@@ -41,6 +53,7 @@ public class MenuManager : MonoBehaviour
     public void BackToMain()
     {
         trackSelectPanel.SetActive(false);
+        instructionsPanel.SetActive(false);
         optionsPanel.SetActive(false);
         mainMenuPanel.SetActive(true);
         
