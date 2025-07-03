@@ -25,25 +25,26 @@ public class CameraOrbit : MonoBehaviour
     void Start()
     {
         SetViewOffset();
+        this.enabled = false;
     }
 
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.K))
-        {
-            currentView = (ViewMode)(((int)currentView + 1) % System.Enum.GetValues(typeof(ViewMode)).Length);
-            SetViewOffset();
+        // if (Input.GetKeyDown(KeyCode.K))
+        // {
+        //     currentView = (ViewMode)(((int)currentView + 1) % System.Enum.GetValues(typeof(ViewMode)).Length);
+        //     SetViewOffset();
 
-            if (target != null)
-            {
-                transform.position = target.position + target.rotation * targetOffset;
-                Vector3 lookDirection = (target.position + Vector3.up * followHeight) - transform.position;
-                transform.rotation = Quaternion.LookRotation(lookDirection);
+        //     if (target != null)
+        //     {
+        //         transform.position = target.position + target.rotation * targetOffset;
+        //         Vector3 lookDirection = (target.position + Vector3.up * followHeight) - transform.position;
+        //         transform.rotation = Quaternion.LookRotation(lookDirection);
 
-                positionVelocity = Vector3.zero;
-                rotationVelocityY = 0f;
-            }
-        }
+        //         positionVelocity = Vector3.zero;
+        //         rotationVelocityY = 0f;
+        //     }
+        // }
     }
 
     void LateUpdate()
@@ -158,5 +159,26 @@ public class CameraOrbit : MonoBehaviour
         currentView = ViewMode.Rear;
         SetViewOffset();
         forceInstantRearView = true;
+    }
+
+     public void GoToNextViewMode()
+    {
+        currentView = (ViewMode)(((int)currentView + 1) % System.Enum.GetValues(typeof(ViewMode)).Length);
+        SetViewOffset();
+    }
+
+    public void GoToNextViewModeInstant()
+    {
+        GoToNextViewMode();
+        
+        if (target != null)
+        {
+            transform.position = target.position + target.rotation * targetOffset;
+            Vector3 lookDirection = (target.position + Vector3.up * followHeight) - transform.position;
+            transform.rotation = Quaternion.LookRotation(lookDirection);
+
+            positionVelocity = Vector3.zero;
+            rotationVelocityY = 0f;
+        }
     }
 }

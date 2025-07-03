@@ -22,7 +22,7 @@ public class VehicleSelectManager : MonoBehaviour
         if (listOfVehicles == null || listOfVehicles.vehicles == null || listOfVehicles.vehicles.Count == 0)
         {
             Debug.LogError("VehicleSelectManager: 'listOfVehicles' is not assigned or is empty! Please assign a VehicleList ScriptableObject and add vehicles to it.", this);
-            this.enabled = false;
+            this.enabled = false; 
             return;
         }
         vehiclePointer = Mathf.Clamp(vehiclePointer, 0, listOfVehicles.vehicles.Count - 1);
@@ -49,7 +49,7 @@ public class VehicleSelectManager : MonoBehaviour
         }
 
         PlayerPrefs.SetInt("VehiclePointer", vehiclePointer);
-        DisplayCurrentVehicle(); 
+        DisplayCurrentVehicle();
     }
 
     public void leftButton()
@@ -63,7 +63,7 @@ public class VehicleSelectManager : MonoBehaviour
         }
 
         PlayerPrefs.SetInt("VehiclePointer", vehiclePointer);
-        DisplayCurrentVehicle(); 
+        DisplayCurrentVehicle();
     }
 
     private void DisplayCurrentVehicle()
@@ -96,7 +96,7 @@ public class VehicleSelectManager : MonoBehaviour
         if (rb != null)
         {
             rb.useGravity = false;
-            rb.isKinematic = true; 
+            rb.isKinematic = true;
         }
         WheelCollider[] wheelColliders = currentDisplayedVehicle.GetComponentsInChildren<WheelCollider>();
         foreach (WheelCollider wc in wheelColliders)
