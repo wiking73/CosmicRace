@@ -21,8 +21,10 @@ public class RaceManager : MonoBehaviour
     public UnityEngine.UI.Text countdownText;
     public TimeCounter timeCounter;
     private bool raceFinished = false;
-    private List<FinishResult> finishOrder = new List<FinishResult>();
+    public List<FinishResult> finishOrder = new List<FinishResult>();
     public Position positionManager;
+    public GameObject GameOverPanel;
+    public Text gameOverText;
 
     private void Awake()
     {
@@ -80,18 +82,18 @@ public class RaceManager : MonoBehaviour
             playerPosition = activeRacers.FindIndex(r => r == GameManager.Instance.playerCarInstance.transform) + 1;
         }
 
-        if (positionText != null)
-        {
-            if (playerPosition != -1)
-            {
-                positionText.text = "Position: " + playerPosition + " / " + activeRacers.Count;
-            }
-            else
-            {
-                positionText.text = "Position: N/A";
-            }
-        }
-        positionText.text = "";
+        //if (positionText != null)
+        //{
+        //    if (playerPosition != -1)
+        //    {
+        //        positionText.text = "Position: " + playerPosition + " / " + activeRacers.Count;
+        //    }
+        //    else
+        //    {
+        //        positionText.text = "Position: N/A";
+        //    }
+        //}
+        //positionText.text = "";
     }
 
     public void FinishRace(GameObject racer)
@@ -142,6 +144,17 @@ public class RaceManager : MonoBehaviour
 
                 resultText.text += $"{i + 1}. {result.racerName} (Time: {formattedTime})\n";
             }
+        }
+    }
+
+    public void GameOver()
+    {
+        Debug.Log("Player Died");
+
+        if (GameOverPanel != null)
+        {
+            GameOverPanel.SetActive(true);
+            gameOverText.text = "Game Over!";
         }
     }
 

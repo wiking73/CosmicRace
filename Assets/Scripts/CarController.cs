@@ -4,10 +4,12 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using TMPro;
+using UnityEngine.UI;
 
 
 public class CarController : MonoBehaviour
 {
+
     [Header("General")]
     private float horizontalInput, verticalInput;
     private float currentSteerAngle, currentbreakForce;
@@ -22,6 +24,16 @@ public class CarController : MonoBehaviour
     public float minVolume = 0.2f;
     public float maxVolume = 1.0f;
 
+
+    //HEALTH
+
+    public HealthUI healthUI;
+    [Header("Health")]
+    public int maxHealth = 100;
+    private int currentHealth;
+
+
+
     private AudioSource engineAudioSource; 
     private Rigidbody carRigidbody;
 
@@ -33,12 +45,12 @@ public class CarController : MonoBehaviour
     private float offTrackTimer = 0f;
     [SerializeField] private float respawnDelay = 1.5f;
 
-
-
-
+    [Header("Respawn & Reset Controls")]
     [SerializeField] private float resetHeight = 1.0f;
-    [SerializeField] private KeyCode resetKey = KeyCode.R;
-    // Settings
+    [SerializeField] private KeyCode resetOrientationKey = KeyCode.R;
+    [SerializeField] private KeyCode manualRespawnKey = KeyCode.P;
+
+    [Header("Settings")]
     [SerializeField] private float motorForce, breakForce, maxSteerAngle;
     [SerializeField] private float boostMultiplier = 3000f;
 
@@ -51,6 +63,10 @@ public class CarController : MonoBehaviour
     [SerializeField] private Transform rearLeftWheelTransform, rearRightWheelTransform;
 
     private CameraOrbit cameraOrbit;
+
+    private VehicleStats vehicleStats;
+
+   
 
 
     private void FixedUpdate()
@@ -65,7 +81,22 @@ public class CarController : MonoBehaviour
         HandleSteering();
         UpdateWheels();
         UpdateEngineSound();
+
+        vehicleStats = GetComponent<VehicleStats>();
+
+        if (verticalInput > 0)
+        {
+            ApplyAccelerationForce(vehicleStats.acceleration); // albo vehicleStats.acceleration
+        }
+
     }
+
+    void ApplyAccelerationForce(float desiredAcceleration)
+    {
+        float force = carRigidbody.mass * desiredAcceleration;
+        carRigidbody.AddForce(transform.forward * force);
+    }
+
     private bool IsCarFlipped()
     {
         float angle = Vector3.Angle(transform.up, Vector3.up);
@@ -75,13 +106,21 @@ public class CarController : MonoBehaviour
     }
     private void Update()
     {
-        if (Input.GetKeyDown(resetKey))
+        if (Input.GetKeyDown(resetOrientationKey))
         {
             ResetCarOrientation();
         }
-        if (UIManager.Instance != null) 
+
+        if (Input.GetKeyDown(manualRespawnKey))
         {
-            UIManager.Instance.ShowFlipCarPrompt(IsCarFlipped()); 
+            RespawnToLastValid();
+        }
+        
+        if (UIManager.Instance != null)
+        {
+            bool isFlipped = IsCarFlipped();
+            UIManager.Instance.ShowFlipCarPrompt(isFlipped);
+            UIManager.Instance.ShowCustomPanel(isFlipped);
         }
 
         UpdateSpeedDisplay();
@@ -117,8 +156,21 @@ public class CarController : MonoBehaviour
 
     private void HandleMotor()
     {
-        frontLeftWheelCollider.motorTorque = verticalInput * motorForce;
-        frontRightWheelCollider.motorTorque = verticalInput * motorForce;
+        float currentSpeed = carRigidbody.linearVelocity.magnitude * 3.6f;
+
+        // Debug.LogWarning("Current speed" +  currentSpeed);
+
+        if (vehicleStats != null && currentSpeed < vehicleStats.topSpeed)
+        {
+            frontLeftWheelCollider.motorTorque = verticalInput * motorForce;
+            frontRightWheelCollider.motorTorque = verticalInput * motorForce;
+        }
+        else
+        {
+            frontLeftWheelCollider.motorTorque = 0;
+            frontRightWheelCollider.motorTorque = 0;
+        }
+
         currentbreakForce = isBreaking ? breakForce : 0f;
         ApplyBreaking();
     }
@@ -187,6 +239,11 @@ public class CarController : MonoBehaviour
             }
         }
 
+        currentHealth = maxHealth;
+        UpdateHealthUI();
+        if (healthUI == null)
+            healthUI = FindObjectOfType<HealthUI>();
+
         cameraOrbit = FindObjectOfType<CameraOrbit>();
 
         if (engineSoundClip != null)
@@ -203,6 +260,20 @@ public class CarController : MonoBehaviour
             Debug.LogError("CarController: SFXManager.Instance is null. Cannot register engine audio source.", this);
         }
 
+        carRigidbody = GetComponent<Rigidbody>();
+        engineAudioSource = GetComponent<AudioSource>();
+
+        vehicleStats = GetComponent<VehicleStats>();
+        if (vehicleStats != null)
+        {
+            motorForce = vehicleStats.acceleration * 300f; // np. skalowanie przyspieszenia na motorForce
+            Debug.LogWarning("Motot force: " + motorForce);
+        }
+        else
+        {
+            Debug.LogError("Brak VehicleStats na pojeździe: " + gameObject.name);
+        }
+
     }
 
     private void OnDestroy()
@@ -213,6 +284,7 @@ public class CarController : MonoBehaviour
         }
         if (UIManager.Instance != null)
         {
+            UIManager.Instance.ShowCustomPanel(false);
             UIManager.Instance.ShowFlipCarPrompt(false);
         }
     }
@@ -244,6 +316,7 @@ public class CarController : MonoBehaviour
 
         if (UIManager.Instance != null)
         {
+            UIManager.Instance.ShowCustomPanel(false);
             UIManager.Instance.ShowFlipCarPrompt(false);
         }
     }
@@ -338,6 +411,8 @@ public class CarController : MonoBehaviour
             rb.linearVelocity = Vector3.zero;
             rb.angularVelocity = Vector3.zero;
         }
+        isOffTrack = false;
+        offTrackTimer = 0f;
 
         Debug.Log("Respawn na punkt: " + bestPoint.name);
     }
@@ -424,6 +499,70 @@ public class CarController : MonoBehaviour
             {
                 UIManager.Instance.ShowTemporaryMessage("", false);
             }
+        }
+    }
+    private void UpdateHealthUI()
+    {
+        if (healthUI != null)
+        {
+            healthUI.UpdateHP(currentHealth, maxHealth);
+        }
+    }
+    public void TakeDamage(int amount)
+    {
+        currentHealth -= amount;
+        currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth);
+        UpdateHealthUI();
+
+        if (currentHealth <= 0)
+        {
+            Die();
+        }
+    }
+
+    public void Heal(int amount)
+    {
+        currentHealth += amount;
+        currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth);
+        UpdateHealthUI();
+    }
+
+
+    private void Die()
+    {
+
+        RaceManager.Instance.GameOver();
+
+
+        if (carRigidbody != null)
+        {
+            carRigidbody.linearVelocity = Vector3.zero;
+            carRigidbody.angularVelocity = Vector3.zero;
+            carRigidbody.isKinematic = true;
+        }
+
+        
+        this.enabled = false;
+
+        
+        if (engineAudioSource != null)
+        {
+            engineAudioSource.Stop();
+        }
+
+        
+        if (UIManager.Instance != null)
+        {
+            UIManager.Instance.ShowTemporaryMessage("Game Over", true);
+        }
+    }
+    private void OnCollisionEnter(Collision collision)
+    {
+        
+        if (collision.gameObject.CompareTag("AI"))
+        {
+            
+            TakeDamage(20);
         }
     }
 }

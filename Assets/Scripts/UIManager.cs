@@ -9,6 +9,9 @@ public class UIManager : MonoBehaviour
     [SerializeField] private GameObject flipCarPromptGameObject;
     [SerializeField] private TextMeshProUGUI temporaryMessageText;
 
+    [Header("Custom Panel")]
+    [SerializeField] private GameObject customPanelGameObject;
+
     private void Awake()
     {
         if (Instance == null)
@@ -38,6 +41,15 @@ public class UIManager : MonoBehaviour
         {
             Debug.LogWarning("UIManager: Temporary Message Text (TextMeshProUGUI) is NOT assigned in the Inspector. Temporary messages will not display.", this);
         }
+
+        if (customPanelGameObject != null)
+        {
+            customPanelGameObject.SetActive(false);
+        }
+        else
+        {
+            Debug.LogWarning("UIManager: Custom Panel Game Object is NOT assigned in the Inspector. Panel functionality will not work.", this);
+        }
     }
 
     public void ShowFlipCarPrompt(bool show)
@@ -62,6 +74,19 @@ public class UIManager : MonoBehaviour
         else
         {
             Debug.LogWarning("UIManager: Attempted to show/hide temporary message, but Temporary Message Text (TextMeshProUGUI) is not assigned!", this);
+        }
+    }
+
+
+    public void ShowCustomPanel(bool show)
+    {
+        if (customPanelGameObject != null)
+        {
+            customPanelGameObject.SetActive(show);
+        }
+        else
+        {
+            Debug.LogWarning("UIManager: Attempted to show/hide Custom Panel, but it's not assigned!", this);
         }
     }
 }

@@ -72,8 +72,8 @@ public class AIController : MonoBehaviour
         }
         else if (gameObject.name.Contains("Violet"))
         {
-            maxSpeed = 25f;
-            acceleration = 25f;
+            maxSpeed = 15f;
+            acceleration = 15f;
             deceleration = 30f;
         }
 
