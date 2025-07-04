@@ -31,7 +31,12 @@ public class AsteroidSpawner : MonoBehaviour
     public float minInitialForce = 10f; // Minimalna początkowa siła (jeśli mają Rigidbody)
     public float maxInitialForce = 20f; // Maksymalna początkowa siła (jeśli mają Rigidbody)
 
-    public GameObject impactEffectPrefab; // Prefab efektu cząsteczkowego na uderzenie (opcjonalnie)
+
+    [Header("Asteroid Impact Properties")]
+    public GameObject impactEffectPrefab;
+    public AudioClip asteroidImpactSound;
+    [Range(0.0f, 1.0f)]
+    public float asteroidImpactSoundVolume = 1.0f;
 
     private float nextSpawnTime;
     private bool hasInitializedSpawnTime = false; // Flaga do jednokrotnej inicjalizacji czasu spawnu po znalezieniu gracza
@@ -78,20 +83,10 @@ public class AsteroidSpawner : MonoBehaviour
             return;
         }
 
-        // === UPROSZCZONA LOGIKA SPAWNOWANIA ===
-        // Sprawdzamy tylko, czy nadszedł czas na kolejny spawn
-        Debug.Log($"AsteroidSpawner: Current Time: {Time.time}. Next Spawn Time: {nextSpawnTime}.");
-
         if (Time.time >= nextSpawnTime)
         {
-            Debug.Log("AsteroidSpawner: Time condition met! Spawning asteroid...");
             SpawnAsteroid();
             SetNextSpawnTimeInternal(); // Ustawiamy następny czas spawnu
-            Debug.Log($"AsteroidSpawner: Next spawn time set to {nextSpawnTime}."); // Logujemy nowy czas
-        }
-        else
-        {
-            Debug.Log("AsteroidSpawner: Not yet time to spawn.");
         }
     }
 
@@ -139,15 +134,14 @@ public class AsteroidSpawner : MonoBehaviour
         AsteroidImpactHandler impactHandler = newAsteroid.AddComponent<AsteroidImpactHandler>();
         if (impactHandler != null)
         {
-            impactHandler.impactEffectPrefab = impactEffectPrefab;
-            Debug.Log("AsteroidSpawner: AsteroidImpactHandler added to new asteroid.");
+            impactHandler.impactSound = asteroidImpactSound; // PRZEKAZUJEMY DŹWIĘK Z SPANWERA
+            impactHandler.impactSoundVolume = asteroidImpactSoundVolume; // PRZEKAZUJEMY GŁOŚNOŚĆ
+            impactHandler.impactEffectPrefab = impactEffectPrefab; // Przekazujemy prefab efektu, jeśli nadal go używasz
+            Debug.Log("AsteroidSpawner: AsteroidImpactHandler added and configured to new asteroid.");
         }
         else
         {
             Debug.LogError("AsteroidSpawner: Failed to add AsteroidImpactHandler to new asteroid! Check if the script exists.");
         }
-        
-        // Destroy(newAsteroid, 10f); // Niszczy asteroidę po 10 sekundach
-        // Debug.Log("AsteroidSpawner: Asteroid scheduled for destruction after 10 seconds.");
     }
 }

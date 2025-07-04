@@ -10,9 +10,8 @@ GameObject:
   m_Component:
   - component: {fileID: 7953088720548415260}
   - component: {fileID: 7899861364079566626}
-  - component: {fileID: 1863604859764342912}
   - component: {fileID: 79279992856579026}
-  - component: {fileID: 4127046108392246627}
+  - component: {fileID: 1863604859764342912}
   m_Layer: 0
   m_Name: Asteroid
   m_TagString: Untagged
@@ -60,34 +59,10 @@ MonoBehaviour:
   maxAsteroidScale: 2
   minInitialForce: 10
   maxInitialForce: 20
-  impactEffectPrefab: {fileID: 0}
---- !u!54 &1863604859764342912
-Rigidbody:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8064434813411640131}
-  serializedVersion: 4
-  m_Mass: 1
-  m_Drag: 0
-  m_AngularDrag: 0.05
-  m_CenterOfMass: {x: 0, y: 0, z: 0}
-  m_InertiaTensor: {x: 1, y: 1, z: 1}
-  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ImplicitCom: 1
-  m_ImplicitTensor: 1
-  m_UseGravity: 1
-  m_IsKinematic: 0
-  m_Interpolate: 0
-  m_Constraints: 0
-  m_CollisionDetection: 0
+  impactEffectPrefab: {fileID: 6790763359025516004, guid: b4625a0ad1f358a4cb97e53fa14c63cb,
+    type: 3}
+  asteroidImpactSound: {fileID: 8300000, guid: 12399574f571d114f9adfd2b1441090c, type: 3}
+  asteroidImpactSoundVolume: 1
 --- !u!64 &79279992856579026
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -110,16 +85,30 @@ MeshCollider:
   m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: 0}
---- !u!114 &4127046108392246627
-MonoBehaviour:
+--- !u!54 &1863604859764342912
+Rigidbody:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8064434813411640131}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 57f21a82eb04f0344b3de6ca4858c71b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  impactEffectPrefab: {fileID: 0}
+  serializedVersion: 4
+  m_Mass: 10
+  m_Drag: 0
+  m_AngularDrag: 0.05
+  m_CenterOfMass: {x: 0, y: 0, z: 0}
+  m_InertiaTensor: {x: 1, y: 1, z: 1}
+  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ImplicitCom: 1
+  m_ImplicitTensor: 1
+  m_UseGravity: 1
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
