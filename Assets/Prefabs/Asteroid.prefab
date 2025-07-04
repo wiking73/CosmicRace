@@ -50,7 +50,7 @@ MonoBehaviour:
     type: 3}
   playerTransform: {fileID: 0}
   detectionRadius: 50
-  spawnHeight: 10
+  spawnHeight: 50
   spawnForwardOffset: 30
   spawnSidewaysRange: 20
   minSpawnInterval: 1
@@ -63,6 +63,8 @@ MonoBehaviour:
     type: 3}
   asteroidImpactSound: {fileID: 8300000, guid: 12399574f571d114f9adfd2b1441090c, type: 3}
   asteroidImpactSoundVolume: 1
+  playerHitSound: {fileID: 0}
+  playerHitSoundVolume: 1
 --- !u!64 &79279992856579026
 MeshCollider:
   m_ObjectHideFlags: 0

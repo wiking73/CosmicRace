@@ -37,6 +37,9 @@ public class AsteroidSpawner : MonoBehaviour
     public AudioClip asteroidImpactSound;
     [Range(0.0f, 1.0f)]
     public float asteroidImpactSoundVolume = 1.0f;
+    public AudioClip playerHitSound;
+    [Range(0.0f, 1.0f)]
+    public float playerHitSoundVolume = 1.0f;
 
     private float nextSpawnTime;
     private bool hasInitializedSpawnTime = false; // Flaga do jednokrotnej inicjalizacji czasu spawnu po znalezieniu gracza
@@ -136,6 +139,8 @@ public class AsteroidSpawner : MonoBehaviour
         {
             impactHandler.impactSound = asteroidImpactSound; // PRZEKAZUJEMY DŹWIĘK Z SPANWERA
             impactHandler.impactSoundVolume = asteroidImpactSoundVolume; // PRZEKAZUJEMY GŁOŚNOŚĆ
+            impactHandler.impactSound = playerHitSound; // PRZEKAZUJEMY DŹWIĘK Z SPANWERA
+            impactHandler.impactSoundVolume = playerHitSoundVolume; // PRZEKAZUJEMY GŁOŚNOŚĆ
             impactHandler.impactEffectPrefab = impactEffectPrefab; // Przekazujemy prefab efektu, jeśli nadal go używasz
             Debug.Log("AsteroidSpawner: AsteroidImpactHandler added and configured to new asteroid.");
         }
