@@ -3,150 +3,147 @@ using System.Collections;
 
 public class AsteroidSpawner : MonoBehaviour
 {
+    [Header("Link do gracza")]
+    private Transform playerTransform;
+
+    [Header("Prefab & Parametry spawnu")]
     public GameObject asteroidPrefab;
-    [HideInInspector] public Transform playerTransform; // Będzie wypełniane automatycznie
+    public float spawnHeight = 50f;
+    public float spawnForwardOffset = 30f;
+    public float spawnSidewaysRange = 20f;
+    public float minSpawnInterval = 1f;
+    public float maxSpawnInterval = 3f;
 
-    // Te zmienne są teraz mniej istotne, bo spawner będzie podążał za graczem
-    // i zawsze będzie w "optymalnej" pozycji do spawnowania.
-    // Zachowujemy je jako 'public', jeśli zechcesz je później wykorzystać do innych celów.
-    public float detectionRadius = 50f; // Możesz je zignorować lub usunąć, jeśli niepotrzebne
-    // public float spawnHeight = 50f; // Ta jest nadal ważna!
-    // public float spawnForwardOffset = 30f; // Ta jest nadal ważna!
-    // public float spawnSidewaysRange = 20f; // Ta jest nadal ważna!
+    [Header("Właściwości asteroidy")]
+    public float minAsteroidScale = 0.5f;
+    public float maxAsteroidScale = 2.0f;
+    public float minInitialForce = 10f;
+    public float maxInitialForce = 20f;
 
-
-    // Kluczowe parametry do regulacji spawnowania:
-    [Header("Spawn Parameters")]
-    public float spawnHeight = 50f; // Wysokość, z której spadają asteroidy
-    public float spawnForwardOffset = 30f; // Jak daleko PRZED graczem ma się pojawić asteroida
-    public float spawnSidewaysRange = 20f; // Zakres losowego położenia X względem GRACZA
-
-    public float minSpawnInterval = 1f; // Minimalny czas między spawnami
-    public float maxSpawnInterval = 3f; // Maksymalny czas między spawnami
-
-    [Header("Asteroid Properties")]
-    public float minAsteroidScale = 0.5f; // Minimalny rozmiar asteroidy
-    public float maxAsteroidScale = 2.0f; // Maksymalny rozmiar asteroidy
-
-    public float minInitialForce = 10f; // Minimalna początkowa siła (jeśli mają Rigidbody)
-    public float maxInitialForce = 20f; // Maksymalna początkowa siła (jeśli mają Rigidbody)
-
-
-    [Header("Asteroid Impact Properties")]
+    [Header("Efekty & dźwięki uderzeń")]
     public GameObject impactEffectPrefab;
     public AudioClip asteroidImpactSound;
-    [Range(0.0f, 1.0f)]
-    public float asteroidImpactSoundVolume = 1.0f;
+    [Range(0f, 1f)] public float asteroidImpactSoundVolume = 1f;
     public AudioClip playerHitSound;
-    [Range(0.0f, 1.0f)]
-    public float playerHitSoundVolume = 1.0f;
+    [Range(0f, 1f)] public float playerHitSoundVolume = 1f;
 
     private float nextSpawnTime;
-    private bool hasInitializedSpawnTime = false; // Flaga do jednokrotnej inicjalizacji czasu spawnu po znalezieniu gracza
+    private bool spawnTimeInitialized = false;
+
+    // Dodatkowa flaga, aby zidentyfikować, czy ten spawner jest "głównym"
+    // To pole jest domyślnie publiczne i widoczne w Inspektorze
+    // ZAZNACZ JE TYLKO NA TYM SPANWERZE, KTÓRY MA SPAWNOWAĆ ASTEROIDY
+    public bool isMainSpawner = false; 
 
     void Start()
     {
-        Debug.Log("AsteroidSpawner: Spawner initialized. Waiting for player to be found for first spawn time setup.");
+        // Jeśli ten skrypt NIE jest głównym spawnerem (czyli jest na instancjonowanej asteroidzie)
+        // to powinien się dezaktywować.
+        if (!isMainSpawner)
+        {
+            this.enabled = false; // Dezaktywuje ten konkretny komponent AsteroidSpawner
+            Debug.LogWarning("AsteroidSpawner: Non-main spawner detected on an asteroid. Deactivating its spawner logic.");
+            return; // Zakończ, bo ten spawner nie ma działać
+        }
+
+        Debug.Log("AsteroidSpawner: Main Spawner initialized. Waiting for player to be found for first spawn time setup.");
     }
 
     void Update()
     {
-        // === Logika znajdowania gracza ===
-        // To pozostaje, aby upewnić się, że playerTransform jest zawsze dostępny
+        // Tylko główny spawner ma wykonywać logikę spawnowania
+        if (!isMainSpawner)
+        {
+            return; // Upewnij się, że inne spawny są wyłączone w Update też
+        }
+
+        // 1) Znajdź gracza, jeśli jeszcze nie mamy
         if (playerTransform == null)
         {
-            GameObject playerGameObject = GameObject.FindGameObjectWithTag("Player");
-            if (playerGameObject != null)
+            var go = GameObject.FindGameObjectWithTag("Player");
+            if (go != null)
             {
-                playerTransform = playerGameObject.transform;
-                Debug.Log("AsteroidSpawner: SUCCESSFULLY Found player: " + playerGameObject.name);
-                
-                // Po znalezieniu gracza, zainicjuj czas spawnu tylko raz
-                if (!hasInitializedSpawnTime)
-                {
-                    SetNextSpawnTimeInternal(); // Ustawiamy pierwszy czas spawnu
-                    hasInitializedSpawnTime = true;
-                    Debug.Log($"AsteroidSpawner: Initial spawn time set to {nextSpawnTime} (Current Time: {Time.time}).");
-                }
+                playerTransform = go.transform;
+                Debug.Log("[AsteroidSpawner] Player found, initializing spawn timer.");
+                ScheduleNextSpawn();
+                spawnTimeInitialized = true;
             }
             else
             {
-                // To ostrzeżenie będzie się pojawiać w każdej klatce, dopóki gracz nie zostanie znaleziony.
-                Debug.LogWarning("AsteroidSpawner: Player GameObject with tag 'Player' NOT FOUND in scene. Spawning paused until player is found.");
-                return; // Wyjdź z Update, jeśli gracz nie jest jeszcze dostępny
+                return;
             }
         }
 
-        // Jeśli playerTransform jest nadal null (po próbie znalezienia), oznacza to, że gracz nie został znaleziony.
-        // Wychodzimy, aby uniknąć NullReferenceException w dalszej części Update.
-        if (playerTransform == null)
-        {
-            // Ten log będzie się pojawiał tylko, jeśli gracz nie zostanie znaleziony przez dłuższy czas
-            Debug.LogWarning("AsteroidSpawner: PlayerTransform is still null, cannot proceed with spawning.");
-            return;
-        }
-
-        if (Time.time >= nextSpawnTime)
+        // 2) Jeśli już zainicjowaliśmy timer i jest czas — spawnuj
+        if (spawnTimeInitialized && Time.time >= nextSpawnTime)
         {
             SpawnAsteroid();
-            SetNextSpawnTimeInternal(); // Ustawiamy następny czas spawnu
+            ScheduleNextSpawn();
         }
     }
 
-    // Prywatna metoda do ustawiania następnego czasu spawnu
-    private void SetNextSpawnTimeInternal() 
+    private void ScheduleNextSpawn()
     {
         nextSpawnTime = Time.time + Random.Range(minSpawnInterval, maxSpawnInterval);
+        Debug.Log($"[AsteroidSpawner] Next spawn in {nextSpawnTime - Time.time:F2}s (at t = {nextSpawnTime:F2})");
     }
 
-    void SpawnAsteroid()
+    private void SpawnAsteroid()
     {
-        // Pozycja spawnu: przed graczem, na określonej wysokości, z losowym przesunięciem bocznym
-        Vector3 spawnPosition = playerTransform.position + playerTransform.forward * spawnForwardOffset;
-        spawnPosition.y = spawnHeight;
-        spawnPosition.x += Random.Range(-spawnSidewaysRange, spawnSidewaysRange);
-        Debug.Log($"AsteroidSpawner: Attempting to spawn asteroid at: {spawnPosition}. Relative to Player.");
+        // 1) Oblicz “płaskie” wektory forward/right względem świata,
+        Vector3 flatForward = Vector3.ProjectOnPlane(playerTransform.forward, Vector3.up).normalized;
+        Vector3 flatRight   = Vector3.Cross(Vector3.up, flatForward).normalized;
 
-        GameObject newAsteroid = Instantiate(asteroidPrefab, spawnPosition, Random.rotation);
-        
-        if (newAsteroid == null)
-        {
-            Debug.LogError("AsteroidSpawner: Failed to instantiate asteroidPrefab. Is it assigned in the Inspector?");
-            return; // Zakończ, jeśli instancjonowanie się nie powiodło
-        }
+        float forwardDist = spawnForwardOffset;
 
-        float randomScale = Random.Range(minAsteroidScale, maxAsteroidScale);
-        newAsteroid.transform.localScale = Vector3.one * randomScale;
-        Debug.Log($"AsteroidSpawner: Asteroid spawned with scale: {randomScale}.");
+        float sideOffset = Random.Range(-spawnSidewaysRange, spawnSidewaysRange);
 
-        Rigidbody rb = newAsteroid.GetComponent<Rigidbody>();
-        if (rb != null)
-        {
-            Vector3 forceDirection = (Vector3.down * Random.Range(minInitialForce, maxInitialForce)) + 
-                                     (Random.onUnitSphere * 0.5f); // Bardziej subtelne odchylenie
-            forceDirection.y = -Mathf.Abs(forceDirection.y); // Upewniamy się, że zawsze leci w dół
-            rb.AddForce(forceDirection, ForceMode.Impulse);
-            rb.AddTorque(Random.insideUnitSphere * 10f, ForceMode.Impulse); // Losowy obrót
-            Debug.Log($"AsteroidSpawner: Added force {forceDirection} and torque to asteroid Rigidbody.");
-        }
-        else
-        {
-            Debug.LogWarning("AsteroidSpawner: Asteroid prefab has no Rigidbody. It won't fall down naturally! Please add Rigidbody component to your asteroid prefab.");
-        }
+        // 4) Docelowa pozycja:
+        Vector3 spawnPos = playerTransform.position
+                         + flatForward * forwardDist
+                         + flatRight   * sideOffset
+                         + Vector3.up  * spawnHeight;
 
-        AsteroidImpactHandler impactHandler = newAsteroid.AddComponent<AsteroidImpactHandler>();
-        if (impactHandler != null)
+        Debug.Log($"[AsteroidSpawner] Spawning at {spawnPos}");
+
+        // 5) Instancja:
+        GameObject a = Instantiate(asteroidPrefab, spawnPos, Random.rotation);
+        a.transform.localScale = Vector3.one * Random.Range(minAsteroidScale, maxAsteroidScale);
+
+        // 6) RigidBody jako ciężki kamień:
+        if (a.TryGetComponent<Rigidbody>(out var rb))
         {
-            impactHandler.impactSound = asteroidImpactSound; // PRZEKAZUJEMY DŹWIĘK Z SPANWERA
-            impactHandler.impactSoundVolume = asteroidImpactSoundVolume; // PRZEKAZUJEMY GŁOŚNOŚĆ
-            impactHandler.impactSound = playerHitSound; // PRZEKAZUJEMY DŹWIĘK Z SPANWERA
-            impactHandler.impactSoundVolume = playerHitSoundVolume; // PRZEKAZUJEMY GŁOŚNOŚĆ
-            impactHandler.impactEffectPrefab = impactEffectPrefab; // Przekazujemy prefab efektu, jeśli nadal go używasz
-            Debug.Log("AsteroidSpawner: AsteroidImpactHandler added and configured to new asteroid.");
+            rb.mass = 50f;
+            rb.useGravity = true;
+            rb.drag = 0f;
+            rb.angularDrag = 0f;
+            rb.interpolation = RigidbodyInterpolation.Interpolate;
+            rb.collisionDetectionMode = CollisionDetectionMode.ContinuousDynamic;
+
+            Vector3 sideForce = new Vector3(Random.Range(-1f,1f), 0f, Random.Range(-1f,1f)) * 2f;
+            Vector3 force = Vector3.down * Random.Range(minInitialForce, maxInitialForce) + sideForce;
+            rb.AddForce(force, ForceMode.Impulse);
+            rb.AddTorque(Random.insideUnitSphere * 10f, ForceMode.Impulse);
         }
         else
         {
-            Debug.LogError("AsteroidSpawner: Failed to add AsteroidImpactHandler to new asteroid! Check if the script exists.");
+            Debug.LogWarning("[AsteroidSpawner] Prefab ma braki Rigidbody!");
+        }
+
+        // 7) Podczep handler kolizji i przekaz parametry:
+        var h = a.AddComponent<AsteroidImpactHandler>();
+        h.impactEffectPrefab   = impactEffectPrefab;
+        h.impactSound          = asteroidImpactSound;
+        h.impactSoundVolume    = asteroidImpactSoundVolume;
+        h.playerHitSound       = playerHitSound;
+        h.playerHitSoundVolume = playerHitSoundVolume;
+
+        // **NOWA LOGIKA:** Jeśli prefab asteroidy zawiera również AsteroidSpawner, dezaktywuj go.
+        // To jest kluczowe, aby instancjonowane asteroidy nie stawały się nowymi spawnerami.
+        if (a.TryGetComponent<AsteroidSpawner>(out var spawnedSpawner))
+        {
+            spawnedSpawner.enabled = false; // Dezaktywuj skrypt AsteroidSpawner na tej asteroidzie
+            Debug.Log($"[AsteroidSpawner] Deactivated AsteroidSpawner on spawned asteroid '{a.name}'.");
         }
     }
 }

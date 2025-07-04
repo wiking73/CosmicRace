@@ -7,7 +7,8 @@ public class AsteroidImpactHandler : MonoBehaviour
     [Range(0.0f, 1.0f)]
     public float impactSoundVolume = 1.0f;
     [Header("Player Impact Properties")]
-    public int damageAmount = 20;public AudioClip playerHitSound; // Dźwięk uderzenia w gracza (opcjonalnie, może być ten sam co impactSound)
+    public int damageAmount = 10;
+    public AudioClip playerHitSound; // Dźwięk uderzenia w gracza (opcjonalnie, może być ten sam co impactSound)
     [Range(0.0f, 1.0f)]
     public float playerHitSoundVolume = 1.0f; 
 
